@@ -6,6 +6,7 @@ public class ChatMessage
     private int inRoomID;
     private String text;
 
+    // JSON deserialization requires a default constructor to be present
     public ChatMessage(){}
 
     public ChatMessage(String text)

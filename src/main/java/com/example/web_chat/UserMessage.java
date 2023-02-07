@@ -4,7 +4,7 @@ public class UserMessage
 {
     private String text;
 
-
+    // JSON deserialization requires a default constructor to be present
     public UserMessage(){};
 
     public UserMessage(String text)
