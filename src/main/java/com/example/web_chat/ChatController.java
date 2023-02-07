@@ -19,13 +19,6 @@ public class ChatController
         this.template = template;
     }
 
-    //@MessageMapping("/room") @SendTo("/topic/greetings")
-    //public String greeting(String message) throws Exception
-    //{
-    //System.out.print("Got message!!! \n\n");
-    //Thread.sleep(1000); // simulated delay
-    //return "{\"content\" : \"Hello\"}";
-    //}
     @MessageMapping("/room/{room}")
     public void publish(@DestinationVariable String room, UserMessage message) throws Exception
     {
