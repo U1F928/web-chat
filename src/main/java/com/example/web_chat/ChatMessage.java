@@ -9,17 +9,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "chat_messages")
+@Entity @Table(name = "chat_messages")
 public class ChatMessage
 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chat_message_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "chat_message_id")
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "chat_room_name")
+    @OneToOne @JoinColumn(name = "chat_room_name")
     private ChatRoom room;
 
     @Column(name = "chat_message_unix_timestamp")
@@ -29,11 +25,13 @@ public class ChatMessage
     private String text;
 
     // JSON deserialization requires a default constructor to be present
-    public ChatMessage(){}
+    public ChatMessage()
+    {
+    }
 
     public ChatMessage(ChatRoom room, long unixTimestamp, String text)
     {
-        this.room= room;
+        this.room = room;
         this.unixTimestamp = unixTimestamp;
         this.text = text;
     }
