@@ -16,9 +16,4 @@ public class ClientMessage
     {
         return this.text;
     }
-
-    public void setText(String text)
-    {
-        this.text = text;
-    }
 }
