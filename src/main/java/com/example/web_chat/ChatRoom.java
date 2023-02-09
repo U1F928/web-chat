@@ -19,4 +19,9 @@ class ChatRoom
     {
         this.roomName = roomName;
     }
+
+    public String getRoomName()
+    {
+        return this.roomName;
+    }
 }
