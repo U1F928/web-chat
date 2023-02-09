@@ -14,5 +14,5 @@ function joinRoom(roomName)
 
 function sendMessage(roomName, text)
 {
-    stompClient.send("/app/room/" + roomName, {}, JSON.stringify({"text":text}));
+    stompClient.send("/app/room/"+ roomName + "/publish", {}, JSON.stringify({"text":text}));
 }
