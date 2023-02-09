@@ -1,19 +1,26 @@
 package com.example.web_chat;
 
+import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 @Controller
 public class ChatController
 {
-    @MessageMapping("/room/{roomName}/publish") @SendTo("/topic/room/{roomName}")
-    public ChatMessage publish(@DestinationVariable String roomName, ClientMessage clientMessage) throws Exception
+    @MessageMapping("/room/{roomName}/publish_message") @SendTo("/topic/room/{roomName}")
+    public ChatMessage publishMessage(@DestinationVariable String roomName, @Payload ClientMessage clientMessage)
+            throws Exception
     {
         ChatRoom chatRoom = ChatController.getChatRoom(roomName);
         if (chatRoom == null)
@@ -26,6 +33,16 @@ public class ChatController
         System.out.println("Got message\n\n");
 
         return newChatMessage;
+    }
+
+    @MessageMapping("/room/{roomName}/request_messages")
+    @SendToUser("/topic/requested_messages")
+    public ArrayList<ChatMessage> requestMessages(@DestinationVariable String roomName, @Payload MessageRequest messageRequest)
+    {
+        ArrayList<ChatMessage> chatMessages = new ArrayList<ChatMessage>();
+        chatMessages.add(new ChatMessage(null, 0, "sadad"));
+        System.out.println("\n\n Got message request \n\n");
+        return chatMessages;
     }
 
     private static ChatRoom getChatRoom(String roomName)

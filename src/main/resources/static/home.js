@@ -9,10 +9,20 @@ function joinRoom(roomName)
         {
             console.log(JSON.parse(greeting.body).content);
         });
+        stompClient.subscribe('/user/topic/requested_messages', function (greeting)
+        {
+            console.log(JSON.parse(greeting.body).content);
+        });
+
     });
 }
 
 function sendMessage(roomName, text)
 {
-    stompClient.send("/app/room/"+ roomName + "/publish", {}, JSON.stringify({"text":text}));
+    stompClient.send("/app/room/" + roomName + "/publish_message", {}, JSON.stringify({ "text": text }));
+}
+
+function requestMessages(roomName, messageCount)
+{
+    stompClient.send("/app/room/" + roomName + "/request_messages", {}, JSON.stringify({ "messageCount": messageCount }));
 }
