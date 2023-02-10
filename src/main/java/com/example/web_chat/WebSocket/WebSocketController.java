@@ -1,6 +1,7 @@
 package com.example.web_chat.WebSocket;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -15,12 +16,16 @@ import com.example.web_chat.ClientMessage.ClientMessageService;
 
 import com.example.web_chat.ChatMessage.ChatMessage;
 import com.example.web_chat.MessageRequest.MessageRequest;
+import com.example.web_chat.MessageRequest.MessageRequestService;
 
 @Controller
 public class WebSocketController
 {
     @Autowired
     private ClientMessageService clientMessageService;
+
+    @Autowired
+    private MessageRequestService messageRequestService;
 
     @MessageMapping("/room/{roomName}/publish_message") @SendTo("/topic/room/{roomName}")
     public ChatMessage publishMessage(@DestinationVariable String roomName, @Payload ClientMessage clientMessage)
@@ -33,12 +38,13 @@ public class WebSocketController
 
     @MessageMapping("/room/{roomName}/request_messages")
     @SendToUser("/topic/requested_messages")
-    public ArrayList<ChatMessage> requestMessages(@DestinationVariable String roomName, @Payload MessageRequest messageRequest)
+    public List<ChatMessage> requestMessages(@DestinationVariable String roomName, @Payload MessageRequest messageRequest)
     {
         ArrayList<ChatMessage> chatMessages = new ArrayList<ChatMessage>();
         chatMessages.add(new ChatMessage(null, 0, "sadad"));
         System.out.println("\n\n Got message request \n\n");
         System.out.println("Request type: " + messageRequest.getRequestType());
-        return chatMessages;
+        List<ChatMessage> requestedMessages = this.messageRequestService.process(roomName, messageRequest);
+        return requestedMessages;
     }
 }
