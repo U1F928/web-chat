@@ -1,12 +1,17 @@
-package com.example.web_chat;
+package com.example.web_chat.ClientMessage;
 
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.web_chat.ChatMessage.ChatMessage;
+import com.example.web_chat.ChatMessage.ChatMessageRepository;
+import com.example.web_chat.ChatRoom.ChatRoom;
+import com.example.web_chat.ChatRoom.ChatRoomRepository;
+
 @Service
-class ClientMessageProcessor
+public class ClientMessageService
 {
     @Autowired
     private ChatMessageRepository chatMessageRepository;

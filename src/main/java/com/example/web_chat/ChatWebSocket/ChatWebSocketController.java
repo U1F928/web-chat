@@ -1,4 +1,4 @@
-package com.example.web_chat;
+package com.example.web_chat.ChatWebSocket;
 
 import java.util.ArrayList;
 
@@ -10,19 +10,24 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
+import com.example.web_chat.ClientMessage.ClientMessage;
+import com.example.web_chat.ClientMessage.ClientMessageService;
+
+import com.example.web_chat.ChatMessage.ChatMessage;
+import com.example.web_chat.MessageRequest.MessageRequest;
 
 @Controller
-public class ChatController
+public class ChatWebSocketController
 {
     @Autowired
-    private ClientMessageProcessor clientMessageProcessor;
+    private ClientMessageService clientMessageService;
 
     @MessageMapping("/room/{roomName}/publish_message") @SendTo("/topic/room/{roomName}")
     public ChatMessage publishMessage(@DestinationVariable String roomName, @Payload ClientMessage clientMessage)
             throws Exception
     {
         System.out.println("Got message\n\n");
-        ChatMessage newChatMessage = this.clientMessageProcessor.process(roomName, clientMessage);
+        ChatMessage newChatMessage = this.clientMessageService.process(roomName, clientMessage);
         return newChatMessage;
     }
 

@@ -1,6 +1,6 @@
-package com.example.web_chat;
+package com.example.web_chat.MessageRequest;
 
-class MessageRequest
+public class MessageRequest
 {
     private int messageCount;
 

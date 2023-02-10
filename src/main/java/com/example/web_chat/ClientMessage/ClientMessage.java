@@ -1,4 +1,4 @@
-package com.example.web_chat;
+package com.example.web_chat.ClientMessage;
 
 public class ClientMessage
 {

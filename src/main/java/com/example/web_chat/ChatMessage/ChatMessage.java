@@ -1,4 +1,4 @@
-package com.example.web_chat;
+package com.example.web_chat.ChatMessage;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import com.example.web_chat.ChatRoom.ChatRoom;
 
 @Entity @Table(name = "chat_messages")
 public class ChatMessage

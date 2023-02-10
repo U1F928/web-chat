@@ -1,4 +1,4 @@
-package com.example.web_chat;
+package com.example.web_chat.ChatRoom;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

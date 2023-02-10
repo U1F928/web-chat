@@ -1,4 +1,4 @@
-package com.example.web_chat;
+package com.example.web_chat.ChatMessage;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
