@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "chat_rooms")
-class ChatRoom
+public class ChatRoom
 {
     @Id
     @Column(name = "chat_room_name")
