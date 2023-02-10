@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,17 +19,24 @@ import org.springframework.web.socket.WebSocketSession;
 @Controller
 public class ChatController
 {
+
+    @Autowired
+    private ChatMessageRepository chatMessageRepository;
+
+    @Autowired
+    private ChatRoomRepository chatRoomRepository;
+
     @MessageMapping("/room/{roomName}/publish_message") @SendTo("/topic/room/{roomName}")
     public ChatMessage publishMessage(@DestinationVariable String roomName, @Payload ClientMessage clientMessage)
             throws Exception
     {
-        ChatRoom chatRoom = ChatController.getChatRoom(roomName);
+        ChatRoom chatRoom = this.getChatRoom(roomName);
         if (chatRoom == null)
         {
-            chatRoom = ChatController.createChatRoom(roomName);
+            chatRoom = this.createChatRoom(roomName);
         }
 
-        ChatMessage newChatMessage = ChatController.createChatMessage(chatRoom, clientMessage);
+        ChatMessage newChatMessage = this.createChatMessage(chatRoom, clientMessage);
 
         System.out.println("Got message\n\n");
 
@@ -45,37 +53,24 @@ public class ChatController
         return chatMessages;
     }
 
-    private static ChatRoom getChatRoom(String roomName)
+    private ChatRoom getChatRoom(String roomName)
     {
-        Session session = HibernateUtil.getSession();
-        ChatRoom chatRoom = session.get(ChatRoom.class, roomName);
+        ChatRoom chatRoom = this.chatRoomRepository.findByRoomName(roomName);
         return chatRoom;
     }
 
-    private static ChatRoom createChatRoom(String roomName)
+    private ChatRoom createChatRoom(String roomName)
     {
-        Session session = HibernateUtil.getSession();
-        Transaction transaction = session.beginTransaction();
-
         ChatRoom newChatRoom = new ChatRoom(roomName);
-
-        session.persist(newChatRoom);
-        transaction.commit();
-
+        this.chatRoomRepository.save(newChatRoom);
         return newChatRoom;
     }
 
-    private static ChatMessage createChatMessage(ChatRoom chatRoom, ClientMessage clientMessage)
+    private ChatMessage createChatMessage(ChatRoom chatRoom, ClientMessage clientMessage)
     {
-        Session session = HibernateUtil.getSession();
-        Transaction transaction = session.beginTransaction();
-
         long currentUnixTimestamp = Instant.now().getEpochSecond();
         ChatMessage newChatMessage = new ChatMessage(chatRoom, currentUnixTimestamp, clientMessage.getText());
-
-        session.persist(newChatMessage);
-        transaction.commit();
-
+        this.chatMessageRepository.save(newChatMessage);
         return newChatMessage;
     }
 
