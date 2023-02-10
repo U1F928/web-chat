@@ -19,10 +19,27 @@ function joinRoom(roomName)
 
 function sendMessage(roomName, text)
 {
-    stompClient.send("/app/room/" + roomName + "/publish_message", {}, JSON.stringify({ "text": text }));
+    let clientMessage = {"text":text};
+    stompClient.send
+    (
+        "/app/room/" + roomName + "/publish_message", 
+        {}, 
+        JSON.stringify(clientMessage)
+    );
 }
 
-function requestMessages(roomName, messageCount)
+function requestMessages(roomName, unixTimestamp, requestType, messageCount)
 {
-    stompClient.send("/app/room/" + roomName + "/request_messages", {}, JSON.stringify({ "messageCount": messageCount }));
+    let messageRequest = 
+    { 
+        "unixTimestamp": unixTimestamp, 
+        "requestType": requestType, 
+        "messageCount": messageCount
+    }
+    stompClient.send
+    (
+        "/app/room/" + roomName + "/request_messages", 
+        {}, 
+        JSON.stringify(messageRequest)
+    );
 }

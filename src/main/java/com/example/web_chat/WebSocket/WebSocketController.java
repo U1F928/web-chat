@@ -38,6 +38,7 @@ public class WebSocketController
         ArrayList<ChatMessage> chatMessages = new ArrayList<ChatMessage>();
         chatMessages.add(new ChatMessage(null, 0, "sadad"));
         System.out.println("\n\n Got message request \n\n");
+        System.out.println("Request type: " + messageRequest.getRequestType());
         return chatMessages;
     }
 }
