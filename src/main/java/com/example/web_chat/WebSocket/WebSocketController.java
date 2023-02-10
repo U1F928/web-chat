@@ -1,4 +1,4 @@
-package com.example.web_chat.ChatWebSocket;
+package com.example.web_chat.WebSocket;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ import com.example.web_chat.ChatMessage.ChatMessage;
 import com.example.web_chat.MessageRequest.MessageRequest;
 
 @Controller
-public class ChatWebSocketController
+public class WebSocketController
 {
     @Autowired
     private ClientMessageService clientMessageService;

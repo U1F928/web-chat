@@ -1,4 +1,4 @@
-package com.example.web_chat.ChatWebSocket;
+package com.example.web_chat.WebSocket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -7,7 +7,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @Configuration @EnableWebSocketMessageBroker
-public class ChatWebSocketConfig implements WebSocketMessageBrokerConfigurer
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer
 {
 
     @Override
