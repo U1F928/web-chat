@@ -61,13 +61,14 @@ public class WebSocketTest
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<Throwable> failure = new AtomicReference<>();
 
+        String roomName = "Cats";
+        ClientMessage clientMessage = new ClientMessage("Hello");
         StompSessionHandler handler = new TestSessionHandler(failure)
         {
 
             @Override
             public void afterConnected(final StompSession session, StompHeaders connectedHeaders)
             {
-                String roomName = "Cats";
                 session.subscribe("/topic/room/" + roomName, new StompFrameHandler()
                 {
                     @Override
@@ -79,10 +80,10 @@ public class WebSocketTest
                     @Override
                     public void handleFrame(StompHeaders headers, Object payload)
                     {
-                        ChatMessage greeting = (ChatMessage) payload;
+                        ChatMessage chatMessage = (ChatMessage) payload;
                         try
                         {
-                            assertEquals("Hello", greeting.getText());
+                            assertEquals(clientMessage.getText(), chatMessage.getText());
                         } catch (Throwable t)
                         {
                             failure.set(t);
@@ -95,7 +96,7 @@ public class WebSocketTest
                 });
                 try
                 {
-                    session.send("/app/room/" + roomName + "/publish_message", new ClientMessage("Hello"));
+                    session.send("/app/room/" + roomName + "/publish_message", clientMessage);
                 } catch (Throwable t)
                 {
                     failure.set(t);
@@ -114,7 +115,7 @@ public class WebSocketTest
             }
         } else
         {
-            fail("Greeting not received");
+            fail("Message from server not received");
         }
 
     }
