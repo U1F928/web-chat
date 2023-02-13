@@ -41,10 +41,6 @@ public class WebSocketTest
     @Value(value = "${local.server.port}")
     private int port;
 
-    private SockJsClient sockJsClient;
-
-    private WebSocketStompClient stompClient;
-
     @Test
     public void soloSubscribeSendRecieveTest() throws Exception
     {
