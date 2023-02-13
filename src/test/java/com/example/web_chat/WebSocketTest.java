@@ -30,6 +30,8 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import com.example.web_chat.ChatMessage.ChatMessage;
 import com.example.web_chat.ClientMessage.ClientMessage;
 
+import ch.qos.logback.core.net.server.Client;
+
 import org.springframework.beans.factory.annotation.Value;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -43,109 +45,105 @@ public class WebSocketTest
 
     private WebSocketStompClient stompClient;
 
-    @BeforeEach
-    public void setup()
-    {
-        List<Transport> transports = new ArrayList<>();
-        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
-        this.sockJsClient = new SockJsClient(transports);
-
-        this.stompClient = new WebSocketStompClient(sockJsClient);
-        this.stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-    }
-
     @Test
     public void soloSubscribeSendRecieveTest() throws Exception
     {
-
-        final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Throwable> failure = new AtomicReference<>();
-
         String roomName = "Cats";
+        String websocketURL = "http://localhost:{port}/websocket";
+        ChatClient chatClientA = new ChatClient(roomName, this.port, websocketURL);
         ClientMessage clientMessage = new ClientMessage("Hello");
-        StompSessionHandler handler = new TestSessionHandler(failure)
-        {
-
-            @Override
-            public void afterConnected(final StompSession session, StompHeaders connectedHeaders)
-            {
-                session.subscribe("/topic/room/" + roomName, new StompFrameHandler()
-                {
-                    @Override
-                    public Type getPayloadType(StompHeaders headers)
-                    {
-                        return ChatMessage.class;
-                    }
-
-                    @Override
-                    public void handleFrame(StompHeaders headers, Object payload)
-                    {
-                        ChatMessage chatMessage = (ChatMessage) payload;
-                        try
-                        {
-                            assertEquals(clientMessage.getText(), chatMessage.getText());
-                        } catch (Throwable t)
-                        {
-                            failure.set(t);
-                        } finally
-                        {
-                            session.disconnect();
-                            latch.countDown();
-                        }
-                    }
-                });
-                try
-                {
-                    session.send("/app/room/" + roomName + "/publish_message", clientMessage);
-                } catch (Throwable t)
-                {
-                    failure.set(t);
-                    latch.countDown();
-                }
-            }
-        };
-
-        this.stompClient.connectAsync("http://localhost:{port}/websocket", handler, this.port);
-
-        if (latch.await(3, TimeUnit.SECONDS))
-        {
-            if (failure.get() != null)
-            {
-                throw new AssertionError("", failure.get());
-            }
-        } else
-        {
-            fail("Message from server not received");
-        }
-
+        chatClientA.sendMessage(roomName, clientMessage);
+        TimeUnit.SECONDS.sleep(3);
+        ArrayList<ChatMessage> recievedMessages = chatClientA.getRecievedMessages();
+        assertEquals(recievedMessages.get(0).getText(), clientMessage.getText());
     }
 
     private class TestSessionHandler extends StompSessionHandlerAdapter
     {
+    }
 
-        private final AtomicReference<Throwable> failure;
+    private class ChatClient
+    {
+        private String webSocketURL;
 
-        public TestSessionHandler(AtomicReference<Throwable> failure)
+        private int port;
+
+        private SockJsClient sockJsClient;
+
+        private WebSocketStompClient stompClient;
+
+        private StompSessionHandler sessionHandler;
+
+        private StompSession session;
+
+        public String roomName;
+
+        private ArrayList<ChatMessage> recievedMessages;
+
+        public ChatClient(String roomName, int port, String webSocketURL) throws Exception
         {
-            this.failure = failure;
+            this.webSocketURL = webSocketURL;
+            this.recievedMessages = new ArrayList<ChatMessage>();
+            this.port = port;
+            this.setupStompClient();
+
+            final CountDownLatch latch = new CountDownLatch(1);
+            this.setupSessionHandler(latch);
+            this.stompClient.connectAsync(this.webSocketURL, this.sessionHandler, this.port);
+            if (!latch.await(3, TimeUnit.SECONDS))
+            {
+                fail("Failed to set up the session handler.");
+            }
         }
 
-        @Override
-        public void handleFrame(StompHeaders headers, Object payload)
+        public void sendMessage(String roomName, ClientMessage clientMessage)
         {
-            this.failure.set(new Exception(headers.toString()));
+            this.session.send("/app/room/" + this.roomName + "/publish_message", clientMessage);
         }
 
-        @Override
-        public void handleException(StompSession s, StompCommand c, StompHeaders h, byte[] p, Throwable ex)
+        public ArrayList<ChatMessage> getRecievedMessages()
         {
-            this.failure.set(ex);
+            return this.recievedMessages;
         }
 
-        @Override
-        public void handleTransportError(StompSession session, Throwable ex)
+        private void setupStompClient()
         {
-            this.failure.set(ex);
+            List<Transport> transports = new ArrayList<>();
+            transports.add(new WebSocketTransport(new StandardWebSocketClient()));
+            this.sockJsClient = new SockJsClient(transports);
+            this.stompClient = new WebSocketStompClient(sockJsClient);
+            this.stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        }
+
+        private void setupSessionHandler(CountDownLatch latch)
+        {
+            String roomName = this.roomName;
+            ArrayList<ChatMessage> recievedMessages = this.recievedMessages;
+            ChatClient client = this;
+            this.sessionHandler = new TestSessionHandler()
+            {
+                @Override
+                public void afterConnected(final StompSession session, StompHeaders connectedHeaders)
+                {
+                    client.session = session;
+                    session.subscribe("/topic/room/" + roomName, new StompFrameHandler()
+                    {
+                        @Override
+                        public Type getPayloadType(StompHeaders headers)
+                        {
+                            return ChatMessage.class;
+                        }
+
+                        @Override
+                        public void handleFrame(StompHeaders headers, Object payload)
+                        {
+                            ChatMessage chatMessage = (ChatMessage) payload;
+                            recievedMessages.add(chatMessage);
+                        }
+                    });
+                    latch.countDown();
+                }
+            };
         }
     }
 }
