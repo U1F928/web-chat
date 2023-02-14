@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +22,8 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import com.example.web_chat.ChatMessage.ChatMessage;
 import com.example.web_chat.ClientMessage.ClientMessage;
+import com.example.web_chat.MessageRequest.MessageRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ChatTestClient
 {
@@ -59,6 +62,11 @@ public class ChatTestClient
     public void sendMessage(String roomName, ClientMessage clientMessage)
     {
         this.session.send("/app/room/" + this.roomName + "/publish_message", clientMessage);
+    }
+
+    public void requestMessages(String roomName, MessageRequest messageRequest)
+    {
+        this.session.send("/app/room/" + this.roomName + "/request_messages", messageRequest);
     }
 
     public ArrayList<ChatMessage> getRecievedMessages()
@@ -101,6 +109,27 @@ public class ChatTestClient
                         recievedMessages.add(chatMessage);
                     }
                 });
+                session.subscribe("/user/topic/requested_messages", new StompFrameHandler()
+                {
+                    @Override
+                    public Type getPayloadType(StompHeaders headers)
+                    {
+                        return List.class;
+                    }
+
+                    @Override
+                    public void handleFrame(StompHeaders headers, Object payload)
+                    {
+                        List<Map<String, Object>> requestedMessages = (List<Map<String, Object>>) payload;
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        for (Map<String, Object> messageMap : requestedMessages)
+                        {
+                            ChatMessage chatMessage = objectMapper.convertValue(messageMap, ChatMessage.class);
+                            recievedMessages.add(chatMessage);
+                        }
+                    }
+                });
+
                 latch.countDown();
             }
         };
