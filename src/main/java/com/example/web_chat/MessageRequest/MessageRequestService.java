@@ -21,12 +21,12 @@ public class MessageRequestService
     {
         if(messageRequest.getRequestType() == MessageRequestType.GREATER_THAN_TIMESTAMP)
         {
-            Pageable firstN = PageRequest.of(0, messageRequest.getMessageCount(), Sort.by("unixTimestamp").ascending());
+            Pageable firstN = PageRequest.of(0, messageRequest.getMessageCount());
             return this.chatMessageRepository.findByUnixTimestampGreaterThan(messageRequest.getUnixTimestamp(), firstN);
         }
         else if(messageRequest.getRequestType() == MessageRequestType.LESS_THAN_TIMESTAMP)
         {
-            Pageable firstN = PageRequest.of(0, messageRequest.getMessageCount(), Sort.by("unixTimestamp").descending());
+            Pageable firstN = PageRequest.of(0, messageRequest.getMessageCount());
             return this.chatMessageRepository.findByUnixTimestampLessThan(messageRequest.getUnixTimestamp(), firstN);
         }
         return null;
