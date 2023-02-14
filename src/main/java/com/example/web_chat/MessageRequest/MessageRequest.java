@@ -16,11 +16,6 @@ public class MessageRequest
         this.messageCount = messageCount;
     };
 
-    public MessageRequest(int messageCount)
-    {
-        this.messageCount = messageCount;
-    }
-
     public long getUnixTimestamp()
     {
         return this.unixTimestamp;
