@@ -16,9 +16,9 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long>
 {
-    @Query("SELECT c FROM ChatMessage c WHERE c.unixTimestamp < :unixTimestamp ORDER BY c.unixTimestamp DESC, c.id DESC")
+    @Query("SELECT c FROM ChatMessage c WHERE c.unixTimestamp <= :unixTimestamp ORDER BY c.unixTimestamp DESC, c.id DESC")
     ArrayList<ChatMessage> findByUnixTimestampLessThan(long unixTimestamp, Pageable pageable);
 
-    @Query("SELECT c FROM ChatMessage c WHERE c.unixTimestamp > :unixTimestamp ORDER BY c.unixTimestamp ASC, c.id ASC")
+    @Query("SELECT c FROM ChatMessage c WHERE c.unixTimestamp >= :unixTimestamp ORDER BY c.unixTimestamp ASC, c.id ASC")
     ArrayList<ChatMessage> findByUnixTimestampGreaterThan(long unixTimestamp, Pageable pageable);
 }
