@@ -3,10 +3,9 @@ package com.example.web_chat;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +25,7 @@ public class WebSocketTest
     private int port;
 
     @Test
-    public void soloConnectAndSubscribeTest() throws Exception
+    public void connectAndSubscribeTest() throws Exception
     {
         String roomName = "Cats";
         String websocketURL = "http://localhost:{port}/websocket";
@@ -76,20 +75,18 @@ public class WebSocketTest
     }
 
     @Test
-    public void soloMessageRequestLessThan() throws Exception
+    public void messageRequestLessThanTimestamp() throws Exception
     {
         String roomName = "Cats";
         String websocketURL = "http://localhost:{port}/websocket";
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
 
         int messageCount = 3;
-        ArrayList<String> sentTexts = new ArrayList<String>();
         for (int i = 0; i < messageCount; i++)
         {
             long currentUnixTimestamp = Instant.now().getEpochSecond();
             ClientMessage clientMessage = new ClientMessage("Hello from A from " + currentUnixTimestamp);
             clientA.sendMessage(roomName, clientMessage);
-            sentTexts.add(clientMessage.getText());
             TimeUnit.SECONDS.sleep(1);
         }
         TimeUnit.SECONDS.sleep(3);
@@ -100,24 +97,37 @@ public class WebSocketTest
         clientA.requestMessages(roomName, messageRequest);
         TimeUnit.SECONDS.sleep(3);
 
-        ArrayList<ChatMessage> recievedMessages = clientA.getRecievedMessages();
-        ArrayList<String> requestedRecievedTexts = new ArrayList<String>();
-        for(int i = recievedMessages.size() - 1; i >= recievedMessages.size() - messageCount; i--)
-        {
-            requestedRecievedTexts.add(recievedMessages.get(i).getText());
-        }
-        assertEquals(sentTexts, requestedRecievedTexts);
+        List<String> sentTexts = clientA.getSentMessages().stream().map(ClientMessage::getText).toList();
+        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessage::getText)
+                .toList();
+        assertEquals(sentTexts, recievedRequestedTexts);
     }
 
     @Test
-    public void soloMessageRequestGreaterThan() throws Exception
+    public void requestNonExistingMessagesWithLessThanTimestamp() throws Exception
+    {
+        String roomName = "Cats";
+        String websocketURL = "http://localhost:{port}/websocket";
+        ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
+
+        MessageRequest messageRequest = new MessageRequest(0, MessageRequestType.LESS_THAN_TIMESTAMP,
+                10);
+        clientA.requestMessages(roomName, messageRequest);
+        TimeUnit.SECONDS.sleep(3);
+
+        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessage::getText)
+                .toList();
+        assert(recievedRequestedTexts.isEmpty());
+    }
+
+    @Test
+    public void messageRequestGreaterThanTimestamp() throws Exception
     {
         String roomName = "Cats";
         String websocketURL = "http://localhost:{port}/websocket";
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
 
         int messageCount = 3;
-        ArrayList<String> sentTexts = new ArrayList<String>();
         for (int i = 0; i < messageCount; i++)
         {
             long currentUnixTimestamp = Instant.now().getEpochSecond();
@@ -133,13 +143,54 @@ public class WebSocketTest
         clientA.requestMessages(roomName, messageRequest);
         TimeUnit.SECONDS.sleep(3);
 
-        ArrayList<ChatMessage> recievedMessages = clientA.getRecievedMessages();
-        ArrayList<String> requestedRecievedTexts = new ArrayList<String>();
-        for(int i = recievedMessages.size() - messageCount; i >= recievedMessages.size() - 1; i++)
-        {
-            requestedRecievedTexts.add(recievedMessages.get(i).getText());
-        }
-        assertEquals(sentTexts, requestedRecievedTexts);
+        List<String> sentTexts = clientA.getSentMessages().stream().map(ClientMessage::getText).toList();
+        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessage::getText)
+                .toList();
+        assertEquals(sentTexts, recievedRequestedTexts);
+    }
+
+
+    @Test
+    public void requestNonExistingMessagesWithGreaterThanTimestamp() throws Exception
+    {
+        String roomName = "Cats";
+        String websocketURL = "http://localhost:{port}/websocket";
+        ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
+
+        long currentUnixTimestamp = Instant.now().getEpochSecond();
+        MessageRequest messageRequest = new MessageRequest(currentUnixTimestamp, MessageRequestType.GREATER_THAN_TIMESTAMP,
+                10);
+        clientA.requestMessages(roomName, messageRequest);
+        TimeUnit.SECONDS.sleep(3);
+
+        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessage::getText)
+                .toList();
+        assert(recievedRequestedTexts.isEmpty());
+    }
+
+    @Test
+    public void assureOnlyRelevantClientRecievesRequestedMessage() throws Exception
+    {
+        String roomName = "Cats";
+        String websocketURL = "http://localhost:{port}/websocket";
+        ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
+        ChatTestClient clientB = new ChatTestClient(roomName, this.port, websocketURL);
+        ClientMessage clientMessageA = new ClientMessage("Hello from A");
+
+        clientA.sendMessage(roomName, clientMessageA);
+        TimeUnit.SECONDS.sleep(3);
+
+        assert(clientA.getRecievedRequestedMessages().isEmpty());
+        assert(clientB.getRecievedRequestedMessages().isEmpty());
+
+        long currentUnixTimestamp = Instant.now().getEpochSecond();
+        MessageRequest messageRequest = new MessageRequest(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP,
+                1);
+        clientB.requestMessages(roomName, messageRequest);
+        TimeUnit.SECONDS.sleep(3);
+
+        assert(clientA.getRecievedRequestedMessages().isEmpty());
+        assertEquals(1, clientB.getRecievedRequestedMessages().size());
     }
 
 }
