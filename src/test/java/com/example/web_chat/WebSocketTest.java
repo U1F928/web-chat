@@ -3,6 +3,7 @@ package com.example.web_chat;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,44 +76,70 @@ public class WebSocketTest
     }
 
     @Test
-    public void soloMessageRequest() throws Exception
+    public void soloMessageRequestLessThan() throws Exception
     {
         String roomName = "Cats";
         String websocketURL = "http://localhost:{port}/websocket";
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
 
-        int messageCount = 2;
-        ArrayList<ClientMessage> sentClientMessages = new ArrayList<ClientMessage>();
+        int messageCount = 3;
+        ArrayList<String> sentTexts = new ArrayList<String>();
         for (int i = 0; i < messageCount; i++)
         {
             long currentUnixTimestamp = Instant.now().getEpochSecond();
             ClientMessage clientMessage = new ClientMessage("Hello from A from " + currentUnixTimestamp);
             clientA.sendMessage(roomName, clientMessage);
-            sentClientMessages.add(clientMessage);
-            System.out.println("Sending: " + clientMessage.getText());
+            sentTexts.add(clientMessage.getText());
             TimeUnit.SECONDS.sleep(1);
         }
         TimeUnit.SECONDS.sleep(3);
 
-        /*
-         * request the 2 sent messages with request type LESS_THAN_TIMESTAMP
-         */
-        ArrayList<ChatMessage> recievedMessages = clientA.getRecievedMessages();
-        long unixTimestamp = recievedMessages.get(recievedMessages.size() - 1).getUnixTimestamp();
-        MessageRequest messageRequest = new MessageRequest(unixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP,
+        long currentUnixTimestamp = Instant.now().getEpochSecond();
+        MessageRequest messageRequest = new MessageRequest(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP,
                 messageCount);
         clientA.requestMessages(roomName, messageRequest);
-
         TimeUnit.SECONDS.sleep(3);
-        for (int i = 1; i < messageCount + 1; i++)
+
+        ArrayList<ChatMessage> recievedMessages = clientA.getRecievedMessages();
+        ArrayList<String> requestedRecievedTexts = new ArrayList<String>();
+        for(int i = recievedMessages.size() - 1; i >= recievedMessages.size() - messageCount; i--)
         {
-            System.out.println("Recieved: " + recievedMessages.get(recievedMessages.size() - i).getText());
-            assertEquals
-            (
-                recievedMessages.get(recievedMessages.size() - i).getText(), 
-                sentClientMessages.get(sentClientMessages.size() - i).getText()
-            );
+            requestedRecievedTexts.add(recievedMessages.get(i).getText());
         }
+        assertEquals(sentTexts, requestedRecievedTexts);
+    }
+
+    @Test
+    public void soloMessageRequestGreaterThan() throws Exception
+    {
+        String roomName = "Cats";
+        String websocketURL = "http://localhost:{port}/websocket";
+        ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
+
+        int messageCount = 3;
+        ArrayList<String> sentTexts = new ArrayList<String>();
+        for (int i = 0; i < messageCount; i++)
+        {
+            long currentUnixTimestamp = Instant.now().getEpochSecond();
+            ClientMessage clientMessage = new ClientMessage("Hello from A from " + currentUnixTimestamp);
+            clientA.sendMessage(roomName, clientMessage);
+            TimeUnit.SECONDS.sleep(1);
+        }
+        TimeUnit.SECONDS.sleep(3);
+
+        long unixTimestampOfFirstMessageSent = clientA.getRecievedMessages().get(0).getUnixTimestamp();
+        MessageRequest messageRequest = new MessageRequest(unixTimestampOfFirstMessageSent, MessageRequestType.GREATER_THAN_TIMESTAMP,
+                messageCount);
+        clientA.requestMessages(roomName, messageRequest);
+        TimeUnit.SECONDS.sleep(3);
+
+        ArrayList<ChatMessage> recievedMessages = clientA.getRecievedMessages();
+        ArrayList<String> requestedRecievedTexts = new ArrayList<String>();
+        for(int i = recievedMessages.size() - messageCount; i >= recievedMessages.size() - 1; i++)
+        {
+            requestedRecievedTexts.add(recievedMessages.get(i).getText());
+        }
+        assertEquals(sentTexts, requestedRecievedTexts);
     }
 
 }
