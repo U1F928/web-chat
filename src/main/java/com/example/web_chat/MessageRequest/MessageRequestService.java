@@ -1,5 +1,6 @@
 package com.example.web_chat.MessageRequest;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +19,19 @@ public class MessageRequestService
 
     public List<ChatMessage> process(String roomName, MessageRequest messageRequest)
     {
-        if(messageRequest.getRequestType() == MessageRequestType.GREATER_THAN_TIMESTAMP)
+        if(messageRequest.getRequestType() == MessageRequestType.LESS_THAN_TIMESTAMP)
+        {
+            Pageable firstN = PageRequest.of(0, messageRequest.getMessageCount());
+            List<ChatMessage> requestedMessages = this.chatMessageRepository.findByUnixTimestampLessThan(messageRequest.getUnixTimestamp(), firstN);
+            Collections.reverse(requestedMessages);
+            return requestedMessages;
+        }
+        else if(messageRequest.getRequestType() == MessageRequestType.GREATER_THAN_TIMESTAMP)
         {
             Pageable firstN = PageRequest.of(0, messageRequest.getMessageCount());
             return this.chatMessageRepository.findByUnixTimestampGreaterThan(messageRequest.getUnixTimestamp(), firstN);
         }
-        else if(messageRequest.getRequestType() == MessageRequestType.LESS_THAN_TIMESTAMP)
-        {
-            Pageable firstN = PageRequest.of(0, messageRequest.getMessageCount());
-            return this.chatMessageRepository.findByUnixTimestampLessThan(messageRequest.getUnixTimestamp(), firstN);
-        }
+
         return null;
     }
 }
