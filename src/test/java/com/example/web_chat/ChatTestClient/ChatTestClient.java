@@ -41,12 +41,18 @@ public class ChatTestClient
 
     public String roomName;
 
+    private ArrayList<ClientMessage> sentMessages;
+
     private ArrayList<ChatMessage> recievedMessages;
+
+    private ArrayList<ChatMessage> recievedRequestedMessages;
 
     public ChatTestClient(String roomName, int port, String webSocketURL) throws Exception
     {
         this.webSocketURL = webSocketURL;
+        this.sentMessages = new ArrayList<ClientMessage>();
         this.recievedMessages = new ArrayList<ChatMessage>();
+        this.recievedRequestedMessages = new ArrayList<ChatMessage>();
         this.port = port;
         this.setupStompClient();
 
@@ -62,6 +68,7 @@ public class ChatTestClient
     public void sendMessage(String roomName, ClientMessage clientMessage)
     {
         this.session.send("/app/room/" + this.roomName + "/publish_message", clientMessage);
+        this.sentMessages.add(clientMessage);
     }
 
     public void requestMessages(String roomName, MessageRequest messageRequest)
@@ -69,9 +76,19 @@ public class ChatTestClient
         this.session.send("/app/room/" + this.roomName + "/request_messages", messageRequest);
     }
 
+    public ArrayList<ClientMessage> getSentMessages()
+    {
+        return this.sentMessages;
+    }
+
     public ArrayList<ChatMessage> getRecievedMessages()
     {
         return this.recievedMessages;
+    }
+
+    public ArrayList<ChatMessage> getRecievedRequestedMessages()
+    {
+        return this.recievedRequestedMessages;
     }
 
     private void setupStompClient()
@@ -86,7 +103,7 @@ public class ChatTestClient
     private void setupSessionHandler(CountDownLatch latch)
     {
         String roomName = this.roomName;
-        ArrayList<ChatMessage> recievedMessages = this.recievedMessages;
+        ArrayList<ChatMessage> recievedRequestedMessages = this.recievedRequestedMessages;
         ChatTestClient client = this;
         this.sessionHandler = new TestSessionHandler()
         {
@@ -125,7 +142,7 @@ public class ChatTestClient
                         for (Map<String, Object> messageMap : requestedMessages)
                         {
                             ChatMessage chatMessage = objectMapper.convertValue(messageMap, ChatMessage.class);
-                            recievedMessages.add(chatMessage);
+                            recievedRequestedMessages.add(chatMessage);
                         }
                     }
                 });
