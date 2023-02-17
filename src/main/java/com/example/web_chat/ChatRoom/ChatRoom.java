@@ -1,5 +1,7 @@
 package com.example.web_chat.ChatRoom;
 
+import org.springframework.lang.NonNull;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -9,8 +11,9 @@ import jakarta.persistence.Table;
 @Table(name = "chat_rooms")
 public class ChatRoom
 {
+    @NonNull
     @Id
-    @Column(name = "chat_room_name")
+    @Column(name = "chat_room_name", nullable = false)
     private String roomName;
 
     public ChatRoom(){};
