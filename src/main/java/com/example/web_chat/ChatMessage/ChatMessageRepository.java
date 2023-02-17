@@ -19,8 +19,8 @@ import com.example.web_chat.ChatRoom.ChatRoom;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long>
 {
     @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.unixTimestamp <= :unixTimestamp ORDER BY c.unixTimestamp DESC, c.id DESC")
-    ArrayList<ChatMessage> findByUnixTimestampLessThan(ChatRoom room, long unixTimestamp, Pageable pageable);
+    ArrayList<ChatMessage> findByRoomAndUnixTimestampLessThan(ChatRoom room, long unixTimestamp, Pageable pageable);
 
     @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.unixTimestamp >= :unixTimestamp ORDER BY c.unixTimestamp ASC, c.id ASC")
-    ArrayList<ChatMessage> findByUnixTimestampGreaterThan(ChatRoom room, long unixTimestamp, Pageable pageable);
+    ArrayList<ChatMessage> findByRoomAndUnixTimestampGreaterThan(ChatRoom room, long unixTimestamp, Pageable pageable);
 }
