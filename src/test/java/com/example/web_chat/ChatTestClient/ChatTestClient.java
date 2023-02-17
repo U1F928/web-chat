@@ -50,6 +50,7 @@ public class ChatTestClient
     public ChatTestClient(String roomName, int port, String webSocketURL) throws Exception
     {
         this.webSocketURL = webSocketURL;
+        this.roomName = roomName;
         this.sentMessages = new ArrayList<ClientMessage>();
         this.recievedMessages = new ArrayList<ChatMessage>();
         this.recievedRequestedMessages = new ArrayList<ChatMessage>();
@@ -65,13 +66,13 @@ public class ChatTestClient
         }
     }
 
-    public void sendMessage(String roomName, ClientMessage clientMessage)
+    public void sendMessage(ClientMessage clientMessage)
     {
         this.session.send("/app/room/" + this.roomName + "/publish_message", clientMessage);
         this.sentMessages.add(clientMessage);
     }
 
-    public void requestMessages(String roomName, MessageRequest messageRequest)
+    public void requestMessages(MessageRequest messageRequest)
     {
         this.session.send("/app/room/" + this.roomName + "/request_messages", messageRequest);
     }
