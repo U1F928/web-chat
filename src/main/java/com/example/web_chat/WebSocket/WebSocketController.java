@@ -32,6 +32,7 @@ public class WebSocketController
             throws Exception
     {
         System.out.println("Got message\n\n");
+        System.out.println("\n\n For room:" + roomName + "\n\n");
         ChatMessage newChatMessage = this.clientMessageService.process(roomName, clientMessage);
         return newChatMessage;
     }
@@ -40,9 +41,8 @@ public class WebSocketController
     @SendToUser("/topic/requested_messages")
     public List<ChatMessage> requestMessages(@DestinationVariable String roomName, @Payload MessageRequest messageRequest)
     {
-        ArrayList<ChatMessage> chatMessages = new ArrayList<ChatMessage>();
-        chatMessages.add(new ChatMessage(null, 0, "sadad"));
         System.out.println("\n\n Got message request \n\n");
+        System.out.println("\n\n For room:" + roomName + "\n\n");
         System.out.println("Request type: " + messageRequest.getRequestType());
         List<ChatMessage> requestedMessages = this.messageRequestService.process(roomName, messageRequest);
         return requestedMessages;
