@@ -9,7 +9,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 import com.example.web_chat.ChatMessage.ChatMessage;
 import com.example.web_chat.ChatTestClient.ChatTestClient;
@@ -17,6 +20,10 @@ import com.example.web_chat.ClientMessage.ClientMessage;
 import com.example.web_chat.MessageRequest.MessageRequest;
 import com.example.web_chat.MessageRequest.MessageRequestType;
 
+// set active Spring profile to "test", i.e. use application-test.properties
+@ActiveProfiles("test")
+// recreate Spring context before each test method
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class WebSocketTest
 {
@@ -111,7 +118,8 @@ public class WebSocketTest
         String websocketURL = "http://localhost:{port}/websocket";
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
 
-        MessageRequest messageRequest = new MessageRequest(0, MessageRequestType.LESS_THAN_TIMESTAMP, 10);
+        long currentUnixTimestamp = Instant.now().getEpochSecond();
+        MessageRequest messageRequest = new MessageRequest(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP, 10);
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
 
@@ -156,8 +164,7 @@ public class WebSocketTest
         String websocketURL = "http://localhost:{port}/websocket";
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
 
-        long currentUnixTimestamp = Instant.now().getEpochSecond();
-        MessageRequest messageRequest = new MessageRequest(currentUnixTimestamp,
+        MessageRequest messageRequest = new MessageRequest(0,
                 MessageRequestType.GREATER_THAN_TIMESTAMP, 10);
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
