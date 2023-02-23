@@ -16,6 +16,11 @@ import com.example.web_chat.ChatRoom.ChatRoom;
 @Entity @Table(name = "chat_messages")
 public class ChatMessage
 {
+    /*
+     * TODO: To prevent users from having access to sequential IDs, add a random UUID field 
+     * that can be used when interacting with them.
+     */
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "chat_message_id")
     private Long id;
 
