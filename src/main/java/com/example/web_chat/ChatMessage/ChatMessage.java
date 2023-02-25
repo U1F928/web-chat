@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import org.springframework.lang.NonNull;
@@ -25,7 +25,7 @@ public class ChatMessage
     private Long id;
 
     @NonNull
-    @OneToOne @JoinColumn(name = "chat_room_name", nullable = false)
+    @ManyToOne @JoinColumn(name = "chat_room_name", nullable = false)
     private ChatRoom room;
 
     @Column(name = "chat_message_unix_timestamp", nullable = false)
