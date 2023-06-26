@@ -38,6 +38,7 @@ public class MessageRequestService
             return this.chatMessageRepository.findByRoomAndUnixTimestampGreaterThan(chatRoom, messageRequest.getUnixTimestamp(), firstN);
         }
 
+        // TODO don't just return null
         return null;
     }
 }
