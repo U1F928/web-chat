@@ -18,7 +18,7 @@ on:
 
 jobs:
 
-  build:
+  Test backend:
     runs-on: ubuntu-latest
     steps:
     
@@ -34,6 +34,6 @@ jobs:
     - name: Build
       run: ./mvnw clean && ./mvnw package -DskipTests
       
-    - name: Test
+    - name: Run tests
       run: ./mvnw test
 
