@@ -16,7 +16,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 import com.example.web_chat.ChatTestClient.ChatTestClient;
 import com.example.web_chat.DataLayer.Entity.ChatMessage;
-import com.example.web_chat.DataLayer.Entity.ClientMessage;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.ClientMessageDTO;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestType;
 
@@ -45,7 +45,7 @@ public class WebSocketTest
         String roomName = "Cats";
         String websocketURL = "http://localhost:{port}/websocket";
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
-        ClientMessage clientMessage = new ClientMessage("Hello from A");
+        ClientMessageDTO clientMessage = new ClientMessageDTO("Hello from A");
         clientA.sendMessage(clientMessage);
         TimeUnit.SECONDS.sleep(3);
         ArrayList<ChatMessage> recievedMessages = clientA.getRecievedMessages();
@@ -61,8 +61,8 @@ public class WebSocketTest
         String websocketURL = "http://localhost:{port}/websocket";
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
         ChatTestClient clientB = new ChatTestClient(roomName, this.port, websocketURL);
-        ClientMessage clientMessageA = new ClientMessage("Hello from A");
-        ClientMessage clientMessageB = new ClientMessage("Hello from B");
+        ClientMessageDTO clientMessageA = new ClientMessageDTO("Hello from A");
+        ClientMessageDTO clientMessageB = new ClientMessageDTO("Hello from B");
 
         clientA.sendMessage(clientMessageA);
         TimeUnit.SECONDS.sleep(3);
@@ -93,7 +93,7 @@ public class WebSocketTest
         for (int i = 0; i < messageCount; i++)
         {
             long currentUnixTimestamp = Instant.now().getEpochSecond();
-            ClientMessage clientMessage = new ClientMessage("Hello from A from " + currentUnixTimestamp);
+            ClientMessageDTO clientMessage = new ClientMessageDTO("Hello from A from " + currentUnixTimestamp);
             clientA.sendMessage(clientMessage);
             TimeUnit.SECONDS.sleep(1);
         }
@@ -105,7 +105,7 @@ public class WebSocketTest
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
 
-        List<String> sentTexts = clientA.getSentMessages().stream().map(ClientMessage::getText).toList();
+        List<String> sentTexts = clientA.getSentMessages().stream().map(ClientMessageDTO::getText).toList();
         List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessage::getText)
                 .toList();
         assertEquals(sentTexts, recievedRequestedTexts);
@@ -139,7 +139,7 @@ public class WebSocketTest
         for (int i = 0; i < messageCount; i++)
         {
             long currentUnixTimestamp = Instant.now().getEpochSecond();
-            ClientMessage clientMessage = new ClientMessage("Hello from A from " + currentUnixTimestamp);
+            ClientMessageDTO clientMessage = new ClientMessageDTO("Hello from A from " + currentUnixTimestamp);
             clientA.sendMessage(clientMessage);
             TimeUnit.SECONDS.sleep(1);
         }
@@ -151,7 +151,7 @@ public class WebSocketTest
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
 
-        List<String> sentTexts = clientA.getSentMessages().stream().map(ClientMessage::getText).toList();
+        List<String> sentTexts = clientA.getSentMessages().stream().map(ClientMessageDTO::getText).toList();
         List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessage::getText)
                 .toList();
         assertEquals(sentTexts, recievedRequestedTexts);
@@ -181,7 +181,7 @@ public class WebSocketTest
         String websocketURL = "http://localhost:{port}/websocket";
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
         ChatTestClient clientB = new ChatTestClient(roomName, this.port, websocketURL);
-        ClientMessage clientMessageA = new ClientMessage("Hello from A");
+        ClientMessageDTO clientMessageA = new ClientMessageDTO("Hello from A");
 
         clientA.sendMessage(clientMessageA);
         TimeUnit.SECONDS.sleep(3);
@@ -207,7 +207,7 @@ public class WebSocketTest
         String websocketURL = "http://localhost:{port}/websocket";
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
         ChatTestClient clientB = new ChatTestClient(nonExistentRoomName, this.port, websocketURL);
-        ClientMessage clientMessageA = new ClientMessage("Hello from A");
+        ClientMessageDTO clientMessageA = new ClientMessageDTO("Hello from A");
 
         clientA.sendMessage(clientMessageA);
         TimeUnit.SECONDS.sleep(3);

@@ -11,7 +11,7 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 import com.example.web_chat.DataLayer.Entity.ChatMessage;
-import com.example.web_chat.DataLayer.Entity.ClientMessage;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.ClientMessageDTO;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
 import com.example.web_chat.BusinessLayer.ClientMessageService;
 import com.example.web_chat.BusinessLayer.MessageRequestService;
@@ -26,7 +26,7 @@ public class WebSocketController
     private MessageRequestService messageRequestService;
 
     @MessageMapping("/room/{roomName}/publish_message") @SendTo("/topic/room/{roomName}")
-    public ChatMessage publishMessage(@DestinationVariable String roomName, @Payload ClientMessage clientMessage)
+    public ChatMessage publishMessage(@DestinationVariable String roomName, @Payload ClientMessageDTO clientMessage)
             throws Exception
     {
         System.out.println("Got message\n\n");
