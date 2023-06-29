@@ -1,4 +1,4 @@
-package com.example.web_chat.ChatMessage;
+package com.example.web_chat.DataLayer.Repository;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.example.web_chat.ChatRoom.ChatRoom;
+import com.example.web_chat.DataLayer.Entity.ChatMessage;
+import com.example.web_chat.DataLayer.Entity.ChatRoom;
 
 /*
  * https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details

@@ -1,4 +1,4 @@
-package com.example.web_chat.ClientMessage;
+package com.example.web_chat.DataLayer.Entity;
 
 public class ClientMessage
 {

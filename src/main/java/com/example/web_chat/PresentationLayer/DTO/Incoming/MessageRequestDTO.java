@@ -1,6 +1,6 @@
-package com.example.web_chat.MessageRequest;
+package com.example.web_chat.PresentationLayer.DTO.Incoming;
 
-public class MessageRequest
+public class MessageRequestDTO
 {
 
     private long unixTimestamp;
@@ -9,7 +9,7 @@ public class MessageRequest
 
     private int messageCount;
 
-    public MessageRequest(long unixTimestamp, MessageRequestType requestType, int messageCount)
+    public MessageRequestDTO(long unixTimestamp, MessageRequestType requestType, int messageCount)
     {
         this.unixTimestamp = unixTimestamp;
         this.requestType = requestType;

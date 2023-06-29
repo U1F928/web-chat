@@ -1,4 +1,4 @@
-package com.example.web_chat.ChatRoom;
+package com.example.web_chat.DataLayer.Entity;
 
 import org.springframework.lang.NonNull;
 

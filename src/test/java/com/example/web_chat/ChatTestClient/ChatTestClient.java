@@ -20,9 +20,9 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
-import com.example.web_chat.ChatMessage.ChatMessage;
-import com.example.web_chat.ClientMessage.ClientMessage;
-import com.example.web_chat.MessageRequest.MessageRequest;
+import com.example.web_chat.DataLayer.Entity.ChatMessage;
+import com.example.web_chat.DataLayer.Entity.ClientMessage;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ChatTestClient
@@ -72,7 +72,7 @@ public class ChatTestClient
         this.sentMessages.add(clientMessage);
     }
 
-    public void requestMessages(MessageRequest messageRequest)
+    public void requestMessages(MessageRequestDTO messageRequest)
     {
         this.session.send("/app/room/" + this.roomName + "/request_messages", messageRequest);
     }

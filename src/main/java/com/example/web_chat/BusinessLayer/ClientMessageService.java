@@ -1,14 +1,15 @@
-package com.example.web_chat.ClientMessage;
+package com.example.web_chat.BusinessLayer;
 
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.web_chat.ChatMessage.ChatMessage;
-import com.example.web_chat.ChatMessage.ChatMessageRepository;
-import com.example.web_chat.ChatRoom.ChatRoom;
-import com.example.web_chat.ChatRoom.ChatRoomRepository;
+import com.example.web_chat.DataLayer.Entity.ChatMessage;
+import com.example.web_chat.DataLayer.Entity.ChatRoom;
+import com.example.web_chat.DataLayer.Entity.ClientMessage;
+import com.example.web_chat.DataLayer.Repository.ChatMessageRepository;
+import com.example.web_chat.DataLayer.Repository.ChatRoomRepository;
 
 @Service
 public class ClientMessageService

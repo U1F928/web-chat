@@ -1,4 +1,4 @@
-package com.example.web_chat.WebSocket;
+package com.example.web_chat.PresentationLayer.Controller;
 
 import java.util.List;
 
@@ -10,12 +10,11 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
-import com.example.web_chat.ClientMessage.ClientMessage;
-import com.example.web_chat.ClientMessage.ClientMessageService;
-
-import com.example.web_chat.ChatMessage.ChatMessage;
-import com.example.web_chat.MessageRequest.MessageRequest;
-import com.example.web_chat.MessageRequest.MessageRequestService;
+import com.example.web_chat.DataLayer.Entity.ChatMessage;
+import com.example.web_chat.DataLayer.Entity.ClientMessage;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
+import com.example.web_chat.BusinessLayer.ClientMessageService;
+import com.example.web_chat.BusinessLayer.MessageRequestService;
 
 @Controller
 public class WebSocketController
@@ -38,7 +37,7 @@ public class WebSocketController
 
     @MessageMapping("/room/{roomName}/request_messages")
     @SendToUser("/topic/requested_messages")
-    public List<ChatMessage> requestMessages(@DestinationVariable String roomName, @Payload MessageRequest messageRequest)
+    public List<ChatMessage> requestMessages(@DestinationVariable String roomName, @Payload MessageRequestDTO messageRequest)
     {
         System.out.println("\n\n Got message request \n\n");
         System.out.println("\n\n For room:" + roomName + "\n\n");

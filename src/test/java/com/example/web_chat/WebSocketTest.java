@@ -14,11 +14,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
-import com.example.web_chat.ChatMessage.ChatMessage;
 import com.example.web_chat.ChatTestClient.ChatTestClient;
-import com.example.web_chat.ClientMessage.ClientMessage;
-import com.example.web_chat.MessageRequest.MessageRequest;
-import com.example.web_chat.MessageRequest.MessageRequestType;
+import com.example.web_chat.DataLayer.Entity.ChatMessage;
+import com.example.web_chat.DataLayer.Entity.ClientMessage;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestType;
 
 // set active Spring profile to "test", i.e. use application-test.properties
 @ActiveProfiles("test")
@@ -100,7 +100,7 @@ public class WebSocketTest
         TimeUnit.SECONDS.sleep(3);
 
         long currentUnixTimestamp = Instant.now().getEpochSecond();
-        MessageRequest messageRequest = new MessageRequest(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP,
+        MessageRequestDTO messageRequest = new MessageRequestDTO(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP,
                 messageCount);
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
@@ -119,7 +119,7 @@ public class WebSocketTest
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
 
         long currentUnixTimestamp = Instant.now().getEpochSecond();
-        MessageRequest messageRequest = new MessageRequest(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP, 10);
+        MessageRequestDTO messageRequest = new MessageRequestDTO(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP, 10);
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
 
@@ -146,7 +146,7 @@ public class WebSocketTest
         TimeUnit.SECONDS.sleep(3);
 
         long unixTimestampOfFirstMessageSent = clientA.getRecievedMessages().get(0).getUnixTimestamp();
-        MessageRequest messageRequest = new MessageRequest(unixTimestampOfFirstMessageSent,
+        MessageRequestDTO messageRequest = new MessageRequestDTO(unixTimestampOfFirstMessageSent,
                 MessageRequestType.GREATER_THAN_TIMESTAMP, messageCount);
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
@@ -164,7 +164,7 @@ public class WebSocketTest
         String websocketURL = "http://localhost:{port}/websocket";
         ChatTestClient clientA = new ChatTestClient(roomName, this.port, websocketURL);
 
-        MessageRequest messageRequest = new MessageRequest(0,
+        MessageRequestDTO messageRequest = new MessageRequestDTO(0,
                 MessageRequestType.GREATER_THAN_TIMESTAMP, 10);
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
@@ -190,7 +190,7 @@ public class WebSocketTest
         assert (clientB.getRecievedRequestedMessages().isEmpty());
 
         long currentUnixTimestamp = Instant.now().getEpochSecond();
-        MessageRequest messageRequest = new MessageRequest(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP,
+        MessageRequestDTO messageRequest = new MessageRequestDTO(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP,
                 1);
         clientB.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
@@ -213,7 +213,7 @@ public class WebSocketTest
         TimeUnit.SECONDS.sleep(3);
 
         long currentUnixTimestamp = Instant.now().getEpochSecond();
-        MessageRequest messageRequest = new MessageRequest(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP,
+        MessageRequestDTO messageRequest = new MessageRequestDTO(currentUnixTimestamp, MessageRequestType.LESS_THAN_TIMESTAMP,
                 1);
 
         clientB.requestMessages(messageRequest);

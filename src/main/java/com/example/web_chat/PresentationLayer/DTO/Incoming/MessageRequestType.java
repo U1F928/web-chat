@@ -1,4 +1,4 @@
-package com.example.web_chat.MessageRequest;
+package com.example.web_chat.PresentationLayer.DTO.Incoming;
 
 public enum MessageRequestType
 {

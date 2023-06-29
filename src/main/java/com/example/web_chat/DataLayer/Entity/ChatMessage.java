@@ -1,4 +1,4 @@
-package com.example.web_chat.ChatMessage;
+package com.example.web_chat.DataLayer.Entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,8 +10,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import org.springframework.lang.NonNull;
-
-import com.example.web_chat.ChatRoom.ChatRoom;
 
 @Entity @Table(name = "chat_messages")
 public class ChatMessage
