@@ -1,14 +1,15 @@
-package com.example.web_chat.ClientMessage;
+package com.example.web_chat.BusinessLayer;
 
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.web_chat.ChatMessage.ChatMessage;
-import com.example.web_chat.ChatMessage.ChatMessageRepository;
-import com.example.web_chat.ChatRoom.ChatRoom;
-import com.example.web_chat.ChatRoom.ChatRoomRepository;
+import com.example.web_chat.DataLayer.Entity.ChatMessage;
+import com.example.web_chat.DataLayer.Entity.ChatRoom;
+import com.example.web_chat.DataLayer.Repository.ChatMessageRepository;
+import com.example.web_chat.DataLayer.Repository.ChatRoomRepository;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.ClientMessageDTO;
 
 @Service
 public class ClientMessageService
@@ -19,7 +20,7 @@ public class ClientMessageService
     @Autowired
     private ChatRoomRepository chatRoomRepository;
 
-    public ChatMessage process(String roomName, ClientMessage clientMessage)
+    public ChatMessage process(String roomName, ClientMessageDTO clientMessage)
     {
         ChatRoom chatRoom = this.getChatRoom(roomName);
         if (chatRoom == null)
@@ -43,7 +44,7 @@ public class ClientMessageService
         return newChatRoom;
     }
 
-    private ChatMessage createChatMessage(ChatRoom chatRoom, ClientMessage clientMessage)
+    private ChatMessage createChatMessage(ChatRoom chatRoom, ClientMessageDTO clientMessage)
     {
         long currentUnixTimestamp = Instant.now().getEpochSecond();
         ChatMessage newChatMessage = new ChatMessage(chatRoom, currentUnixTimestamp, clientMessage.getText());

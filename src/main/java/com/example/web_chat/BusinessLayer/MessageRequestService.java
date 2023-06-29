@@ -1,4 +1,4 @@
-package com.example.web_chat.MessageRequest;
+package com.example.web_chat.BusinessLayer;
 
 import java.util.Collections;
 import java.util.List;
@@ -8,10 +8,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.example.web_chat.ChatMessage.ChatMessage;
-import com.example.web_chat.ChatMessage.ChatMessageRepository;
-import com.example.web_chat.ChatRoom.ChatRoom;
-import com.example.web_chat.ChatRoom.ChatRoomRepository;
+import com.example.web_chat.DataLayer.Entity.ChatMessage;
+import com.example.web_chat.DataLayer.Entity.ChatRoom;
+import com.example.web_chat.DataLayer.Repository.ChatMessageRepository;
+import com.example.web_chat.DataLayer.Repository.ChatRoomRepository;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestType;
 
 @Service
 public class MessageRequestService
@@ -22,7 +24,7 @@ public class MessageRequestService
     @Autowired
     private ChatRoomRepository chatRoomRepository;
 
-    public List<ChatMessage> process(String roomName, MessageRequest messageRequest)
+    public List<ChatMessage> process(String roomName, MessageRequestDTO messageRequest)
     {
         ChatRoom chatRoom = this.chatRoomRepository.findByRoomName(roomName);
         if(messageRequest.getRequestType() == MessageRequestType.LESS_THAN_TIMESTAMP)

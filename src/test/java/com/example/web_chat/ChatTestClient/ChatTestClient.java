@@ -20,9 +20,9 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
-import com.example.web_chat.ChatMessage.ChatMessage;
-import com.example.web_chat.ClientMessage.ClientMessage;
-import com.example.web_chat.MessageRequest.MessageRequest;
+import com.example.web_chat.DataLayer.Entity.ChatMessage;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.ClientMessageDTO;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ChatTestClient
@@ -41,7 +41,7 @@ public class ChatTestClient
 
     public String roomName;
 
-    private ArrayList<ClientMessage> sentMessages;
+    private ArrayList<ClientMessageDTO> sentMessages;
 
     private ArrayList<ChatMessage> recievedMessages;
 
@@ -51,7 +51,7 @@ public class ChatTestClient
     {
         this.webSocketURL = webSocketURL;
         this.roomName = roomName;
-        this.sentMessages = new ArrayList<ClientMessage>();
+        this.sentMessages = new ArrayList<ClientMessageDTO>();
         this.recievedMessages = new ArrayList<ChatMessage>();
         this.recievedRequestedMessages = new ArrayList<ChatMessage>();
         this.port = port;
@@ -66,18 +66,18 @@ public class ChatTestClient
         }
     }
 
-    public void sendMessage(ClientMessage clientMessage)
+    public void sendMessage(ClientMessageDTO clientMessage)
     {
         this.session.send("/app/room/" + this.roomName + "/publish_message", clientMessage);
         this.sentMessages.add(clientMessage);
     }
 
-    public void requestMessages(MessageRequest messageRequest)
+    public void requestMessages(MessageRequestDTO messageRequest)
     {
         this.session.send("/app/room/" + this.roomName + "/request_messages", messageRequest);
     }
 
-    public ArrayList<ClientMessage> getSentMessages()
+    public ArrayList<ClientMessageDTO> getSentMessages()
     {
         return this.sentMessages;
     }

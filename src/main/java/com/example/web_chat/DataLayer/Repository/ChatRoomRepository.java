@@ -1,6 +1,8 @@
-package com.example.web_chat.ChatRoom;
+package com.example.web_chat.DataLayer.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.web_chat.DataLayer.Entity.ChatRoom;
 
 /*
  * https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.details
