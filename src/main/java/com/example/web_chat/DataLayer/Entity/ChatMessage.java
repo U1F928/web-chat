@@ -8,8 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
-import org.springframework.lang.NonNull;
+import jakarta.validation.constraints.NotNull;
 
 @Entity @Table(name = "chat_messages")
 public class ChatMessage
@@ -22,14 +21,14 @@ public class ChatMessage
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "chat_message_id")
     private Long id;
 
-    @NonNull
+    @NotNull
     @ManyToOne @JoinColumn(name = "chat_room_name", nullable = false)
     private ChatRoom room;
 
     @Column(name = "chat_message_unix_timestamp", nullable = false)
     private long unixTimestamp;
 
-    @NonNull
+    @NotNull
     @Column(name = "chat_message_text", nullable = false)
     private String text;
 
