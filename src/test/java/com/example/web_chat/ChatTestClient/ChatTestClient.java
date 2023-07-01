@@ -20,9 +20,9 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
-import com.example.web_chat.DataLayer.Entity.ChatMessage;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.ClientMessageDTO;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
+import com.example.web_chat.PresentationLayer.DTO.Outgoing.ChatMessageDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ChatTestClient
@@ -43,17 +43,17 @@ public class ChatTestClient
 
     private ArrayList<ClientMessageDTO> sentMessages;
 
-    private ArrayList<ChatMessage> recievedMessages;
+    private ArrayList<ChatMessageDTO> recievedMessages;
 
-    private ArrayList<ChatMessage> recievedRequestedMessages;
+    private ArrayList<ChatMessageDTO> recievedRequestedMessages;
 
     public ChatTestClient(String roomName, int port, String webSocketURL) throws Exception
     {
         this.webSocketURL = webSocketURL;
         this.roomName = roomName;
         this.sentMessages = new ArrayList<ClientMessageDTO>();
-        this.recievedMessages = new ArrayList<ChatMessage>();
-        this.recievedRequestedMessages = new ArrayList<ChatMessage>();
+        this.recievedMessages = new ArrayList<ChatMessageDTO>();
+        this.recievedRequestedMessages = new ArrayList<ChatMessageDTO>();
         this.port = port;
         this.setupStompClient();
 
@@ -82,12 +82,12 @@ public class ChatTestClient
         return this.sentMessages;
     }
 
-    public ArrayList<ChatMessage> getRecievedMessages()
+    public ArrayList<ChatMessageDTO> getRecievedMessages()
     {
         return this.recievedMessages;
     }
 
-    public ArrayList<ChatMessage> getRecievedRequestedMessages()
+    public ArrayList<ChatMessageDTO> getRecievedRequestedMessages()
     {
         return this.recievedRequestedMessages;
     }
@@ -104,7 +104,7 @@ public class ChatTestClient
     private void setupSessionHandler(CountDownLatch latch)
     {
         String roomName = this.roomName;
-        ArrayList<ChatMessage> recievedRequestedMessages = this.recievedRequestedMessages;
+        ArrayList<ChatMessageDTO> recievedRequestedMessages = this.recievedRequestedMessages;
         ChatTestClient client = this;
         this.sessionHandler = new TestSessionHandler()
         {
@@ -117,13 +117,13 @@ public class ChatTestClient
                     @Override
                     public Type getPayloadType(StompHeaders headers)
                     {
-                        return ChatMessage.class;
+                        return ChatMessageDTO.class;
                     }
 
                     @Override
                     public void handleFrame(StompHeaders headers, Object payload)
                     {
-                        ChatMessage chatMessage = (ChatMessage) payload;
+                        ChatMessageDTO chatMessage = (ChatMessageDTO) payload;
                         recievedMessages.add(chatMessage);
                     }
                 });
@@ -142,7 +142,7 @@ public class ChatTestClient
                         ObjectMapper objectMapper = new ObjectMapper();
                         for (Map<String, Object> messageMap : requestedMessages)
                         {
-                            ChatMessage chatMessage = objectMapper.convertValue(messageMap, ChatMessage.class);
+                            ChatMessageDTO chatMessage = objectMapper.convertValue(messageMap, ChatMessageDTO.class);
                             recievedRequestedMessages.add(chatMessage);
                         }
                     }

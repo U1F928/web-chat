@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import com.example.web_chat.DataLayer.Entity.ChatMessage;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.ClientMessageDTO;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
+import com.example.web_chat.PresentationLayer.DTO.Mapper.ChatMessageMapper;
+import com.example.web_chat.PresentationLayer.DTO.Outgoing.ChatMessageDTO;
 import com.example.web_chat.BusinessLayer.ClientMessageService;
 import com.example.web_chat.BusinessLayer.MessageRequestService;
 
@@ -25,19 +27,24 @@ public class WebSocketController
     @Autowired
     private MessageRequestService messageRequestService;
 
+    @Autowired
+    private ChatMessageMapper chatMessageMapper;
+
     @MessageMapping("/room/{roomName}/publish_message") @SendTo("/topic/room/{roomName}")
-    public ChatMessage publishMessage(@DestinationVariable String roomName, @Payload ClientMessageDTO clientMessage)
+    public ChatMessageDTO publishMessage(@DestinationVariable String roomName, @Payload ClientMessageDTO clientMessage)
             throws Exception
     {
         ChatMessage newChatMessage = this.clientMessageService.process(roomName, clientMessage);
-        return newChatMessage;
+        ChatMessageDTO chatMessageDTO = this.chatMessageMapper.convertToDTO(newChatMessage);
+        return chatMessageDTO;
     }
 
     @MessageMapping("/room/{roomName}/request_messages")
     @SendToUser("/topic/requested_messages")
-    public List<ChatMessage> requestMessages(@DestinationVariable String roomName, @Payload MessageRequestDTO messageRequest)
+    public List<ChatMessageDTO> requestMessages(@DestinationVariable String roomName, @Payload MessageRequestDTO messageRequest)
     {
         List<ChatMessage> requestedMessages = this.messageRequestService.process(roomName, messageRequest);
-        return requestedMessages;
+        List<ChatMessageDTO> requestedMessageDTOs = this.chatMessageMapper.convertToDTO(requestedMessages);
+        return requestedMessageDTOs;
     }
 }

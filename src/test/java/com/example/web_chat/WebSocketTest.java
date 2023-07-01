@@ -15,10 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 import com.example.web_chat.ChatTestClient.ChatTestClient;
-import com.example.web_chat.DataLayer.Entity.ChatMessage;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.ClientMessageDTO;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestType;
+import com.example.web_chat.PresentationLayer.DTO.Outgoing.ChatMessageDTO;
 
 // set active Spring profile to "test", i.e. use application-test.properties
 @ActiveProfiles("test")
@@ -48,10 +48,10 @@ public class WebSocketTest
         ClientMessageDTO clientMessage = new ClientMessageDTO("Hello from A");
         clientA.sendMessage(clientMessage);
         TimeUnit.SECONDS.sleep(3);
-        ArrayList<ChatMessage> recievedMessages = clientA.getRecievedMessages();
+        ArrayList<ChatMessageDTO> recievedMessages = clientA.getRecievedMessages();
         // check that client A recieved the message it sent
         assertEquals(clientMessage.getText(), recievedMessages.get(0).getText());
-        assertEquals(roomName, recievedMessages.get(0).getRoom().getRoomName());
+        assertEquals(roomName, recievedMessages.get(0).getRoomName());
     }
 
     @Test
@@ -67,8 +67,8 @@ public class WebSocketTest
         clientA.sendMessage(clientMessageA);
         TimeUnit.SECONDS.sleep(3);
 
-        ArrayList<ChatMessage> recievedMessagesA = clientA.getRecievedMessages();
-        ArrayList<ChatMessage> recievedMessagesB = clientB.getRecievedMessages();
+        ArrayList<ChatMessageDTO> recievedMessagesA = clientA.getRecievedMessages();
+        ArrayList<ChatMessageDTO> recievedMessagesB = clientB.getRecievedMessages();
 
         // check that both client A and client B recieved message from client A
         assertEquals(recievedMessagesA.get(0).getText(), clientMessageA.getText());
@@ -106,7 +106,7 @@ public class WebSocketTest
         TimeUnit.SECONDS.sleep(3);
 
         List<String> sentTexts = clientA.getSentMessages().stream().map(ClientMessageDTO::getText).toList();
-        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessage::getText)
+        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessageDTO::getText)
                 .toList();
         assertEquals(sentTexts, recievedRequestedTexts);
     }
@@ -123,7 +123,7 @@ public class WebSocketTest
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
 
-        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessage::getText)
+        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessageDTO::getText)
                 .toList();
         assert (recievedRequestedTexts.isEmpty());
     }
@@ -145,14 +145,14 @@ public class WebSocketTest
         }
         TimeUnit.SECONDS.sleep(3);
 
-        long unixTimestampOfFirstMessageSent = clientA.getRecievedMessages().get(0).getUnixTimestamp();
+        long unixTimestampOfFirstMessageSent = clientA.getRecievedMessages().get(0).getCreationTimestamp();
         MessageRequestDTO messageRequest = new MessageRequestDTO(unixTimestampOfFirstMessageSent,
                 MessageRequestType.GREATER_THAN_TIMESTAMP, messageCount);
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
 
         List<String> sentTexts = clientA.getSentMessages().stream().map(ClientMessageDTO::getText).toList();
-        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessage::getText)
+        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessageDTO::getText)
                 .toList();
         assertEquals(sentTexts, recievedRequestedTexts);
     }
@@ -169,7 +169,7 @@ public class WebSocketTest
         clientA.requestMessages(messageRequest);
         TimeUnit.SECONDS.sleep(3);
 
-        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessage::getText)
+        List<String> recievedRequestedTexts = clientA.getRecievedRequestedMessages().stream().map(ChatMessageDTO::getText)
                 .toList();
         assert (recievedRequestedTexts.isEmpty());
     }
