@@ -27,8 +27,9 @@ public class ChatMessage
     @Column(name = "chat_message_text", nullable = false)
     private String text;
 
-    // JSON deserialization requires a default constructor to be present
-    public ChatMessage(){}
+    public ChatMessage()
+    {
+    }
 
     public ChatMessage(ChatRoom room, long creationTimestamp, String text)
     {
