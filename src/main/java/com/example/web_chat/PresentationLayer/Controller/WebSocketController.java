@@ -12,7 +12,8 @@ import org.springframework.stereotype.Controller;
 
 import com.example.web_chat.DataLayer.Entity.ChatMessage;
 import com.example.web_chat.PresentationLayer.DTO.Incoming.ClientMessageDTO;
-import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestByIDDTO;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestByTimestampDTO;
 import com.example.web_chat.PresentationLayer.DTO.Mapper.ChatMessageMapper;
 import com.example.web_chat.PresentationLayer.DTO.Outgoing.ChatMessageDTO;
 import com.example.web_chat.BusinessLayer.ClientMessageService;
@@ -39,9 +40,18 @@ public class WebSocketController
         return chatMessageDTO;
     }
 
-    @MessageMapping("/room/{roomName}/request_messages")
+    @MessageMapping("/room/{roomName}/request_messages_by_timestamp")
     @SendToUser("/topic/requested_messages")
-    public List<ChatMessageDTO> requestMessages(@DestinationVariable String roomName, @Payload MessageRequestDTO messageRequest)
+    public List<ChatMessageDTO> requestMessages(@DestinationVariable String roomName, @Payload MessageRequestByTimestampDTO messageRequest)
+    {
+        List<ChatMessage> requestedMessages = this.messageRequestService.process(roomName, messageRequest);
+        List<ChatMessageDTO> requestedMessageDTOs = this.chatMessageMapper.convertToDTO(requestedMessages);
+        return requestedMessageDTOs;
+    }
+
+    @MessageMapping("/room/{roomName}/request_messages_by_id")
+    @SendToUser("/topic/requested_messages")
+    public List<ChatMessageDTO> requestMessages(@DestinationVariable String roomName, @Payload MessageRequestByIDDTO messageRequest)
     {
         List<ChatMessage> requestedMessages = this.messageRequestService.process(roomName, messageRequest);
         List<ChatMessageDTO> requestedMessageDTOs = this.chatMessageMapper.convertToDTO(requestedMessages);

@@ -15,7 +15,9 @@ public class ChatRoom
     @Column(name = "chat_room_name", nullable = false)
     private String roomName;
 
-    public ChatRoom(){};
+    public ChatRoom()
+    {
+    };
 
     public ChatRoom(String roomName)
     {

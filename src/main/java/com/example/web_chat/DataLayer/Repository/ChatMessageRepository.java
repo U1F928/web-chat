@@ -1,6 +1,6 @@
 package com.example.web_chat.DataLayer.Repository;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,8 +20,15 @@ import com.example.web_chat.DataLayer.Entity.ChatRoom;
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long>
 {
     @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.creationTimestamp <= :creationTimestamp ORDER BY c.creationTimestamp DESC, c.id DESC")
-    ArrayList<ChatMessage> findByRoomAndUnixTimestampLessThan(ChatRoom room, long creationTimestamp, Pageable pageable);
+    List<ChatMessage> findByRoomAndCreationTimestampLessThan(ChatRoom room, long creationTimestamp, Pageable pageable);
 
     @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.creationTimestamp >= :creationTimestamp ORDER BY c.creationTimestamp ASC, c.id ASC")
-    ArrayList<ChatMessage> findByRoomAndUnixTimestampGreaterThan(ChatRoom room, long creationTimestamp, Pageable pageable);
+    List<ChatMessage> findByRoomAndCreationTimestampGreaterThan(ChatRoom room, long creationTimestamp, Pageable pageable);
+
+    @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.id <= :id ORDER BY c.id DESC")
+    List<ChatMessage> findByRoomAndIDLessThan(ChatRoom room, long id, Pageable pageable);
+
+    @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.id >= :id ORDER BY c.id ASC")
+    List<ChatMessage> findByRoomAndIDGreaterThan(ChatRoom room, long id, Pageable pageable);
+
 }

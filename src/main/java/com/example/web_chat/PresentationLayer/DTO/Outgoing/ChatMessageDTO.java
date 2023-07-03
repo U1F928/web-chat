@@ -10,7 +10,6 @@ public class ChatMessageDTO
 
     private String text;
 
-    // JSON deserialization requires a default constructor to be present
     public ChatMessageDTO(){}
 
     public ChatMessageDTO(long id, String roomName, long unixTimestamp, String text)

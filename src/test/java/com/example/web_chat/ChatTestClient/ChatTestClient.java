@@ -21,7 +21,8 @@ import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import com.example.web_chat.PresentationLayer.DTO.Incoming.ClientMessageDTO;
-import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestDTO;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestByIDDTO;
+import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestByTimestampDTO;
 import com.example.web_chat.PresentationLayer.DTO.Outgoing.ChatMessageDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -72,9 +73,14 @@ public class ChatTestClient
         this.sentMessages.add(clientMessage);
     }
 
-    public void requestMessages(MessageRequestDTO messageRequest)
+    public void requestMessages(MessageRequestByTimestampDTO messageRequest)
     {
-        this.session.send("/app/room/" + this.roomName + "/request_messages", messageRequest);
+        this.session.send("/app/room/" + this.roomName + "/request_messages_by_timestamp", messageRequest);
+    }
+
+    public void requestMessages(MessageRequestByIDDTO messageRequest)
+    {
+        this.session.send("/app/room/" + this.roomName + "/request_messages_by_id", messageRequest);
     }
 
     public ArrayList<ClientMessageDTO> getSentMessages()
