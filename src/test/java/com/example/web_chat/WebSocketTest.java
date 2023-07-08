@@ -149,7 +149,7 @@ public class WebSocketTest
 
         long creationTimestampOfFirstMessageSent = clientA.getRecievedMessages().get(0).getCreationTimestamp();
         MessageRequestByTimestampType requestType = MessageRequestByTimestampType.GREATER_THAN_TIMESTAMP;
-        clientA.requestMessages(creationTimestampOfFirstMessageSent, requestType, messageCount);
+        clientA.requestMessages(creationTimestampOfFirstMessageSent - 1, requestType, messageCount);
         TimeUnit.SECONDS.sleep(3);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedRequestedMessages());
@@ -248,7 +248,7 @@ public class WebSocketTest
 
         long id = messageCount;
         MessageRequestByIDType requestType = MessageRequestByIDType.LESS_THAN_ID;
-        clientA.requestMessages(id, requestType, messageCount);
+        clientA.requestMessages(id + 1, requestType, messageCount);
         TimeUnit.SECONDS.sleep(3);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedRequestedMessages());
