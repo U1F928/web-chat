@@ -28,7 +28,7 @@ function sendMessage(roomName, text)
     );
 }
 
-function requestMessages(roomName, creationTimestamp, requestType, messageCountLimit)
+function requestMessagesByTimestamp(roomName, creationTimestamp, requestType, messageCountLimit)
 {
     let messageRequest = 
     { 
@@ -45,3 +45,18 @@ function requestMessages(roomName, creationTimestamp, requestType, messageCountL
 }
 
 // TODO - add a function to request messages by id
+function requestMessagesByID(roomName, id, requestType, messageCountLimit)
+{
+    let messageRequest = 
+    { 
+        "id": id, 
+        "requestType": requestType, 
+        "messageCountLimit": messageCountLimit
+    }
+    stompClient.send
+    (
+        "/app/room/" + roomName + "/request_messages_by_id", 
+        {}, 
+        JSON.stringify(messageRequest)
+    );
+}
