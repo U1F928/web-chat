@@ -1,5 +1,3 @@
-
-
 class ChatTestClient
 {
     async init()
