@@ -11,7 +11,11 @@ class ChatTestClient
             Once a STOMP client is created, it must call its connect() method 
             to effectively connect and authenticate to the STOMP server.
         */
-        await this.connectPromisified(this.stompClient);
+        let result = await this.connectPromisified(this.stompClient);
+        if(result === "Failed to connect!")
+        {
+            throw new Error(result);
+        }
         this.subscribeToRequestedMessages();
     }
 
