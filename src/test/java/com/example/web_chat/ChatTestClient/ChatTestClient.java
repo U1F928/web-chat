@@ -1,11 +1,10 @@
 package com.example.web_chat.ChatTestClient;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +13,7 @@ import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandler;
+import org.springframework.messaging.simp.stomp.StompSession.Subscription;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -30,17 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ChatTestClient
 {
-    private String webSocketURL;
-
-    private int port;
-
-    private SockJsClient sockJsClient;
-
-    private WebSocketStompClient stompClient;
-
-    private StompSessionHandler sessionHandler;
-
-    private StompSession session;
+    private StompSession stompSession;
 
     public String roomName;
 
@@ -52,26 +42,113 @@ public class ChatTestClient
 
     public ChatTestClient(String roomName, int port, String webSocketURL) throws Exception
     {
-        this.webSocketURL = webSocketURL;
         this.roomName = roomName;
         this.sentMessages = new ArrayList<ClientMessageDTO>();
         this.recievedMessages = new ArrayList<ChatMessageDTO>();
         this.recievedRequestedMessages = new ArrayList<ChatMessageDTO>();
-        this.port = port;
-        this.setupStompClient();
+        this.connect(webSocketURL, port);
+        this.subscribeToRequestedMessages();
+        this.subscribeToRoom(roomName);
+    }
 
-        final CountDownLatch latch = new CountDownLatch(1);
-        this.setupSessionHandler(latch);
-        this.stompClient.connectAsync(this.webSocketURL, this.sessionHandler, this.port);
-        if (!latch.await(3, TimeUnit.SECONDS))
+    private WebSocketStompClient createStompClient()
+    {
+        List<Transport> transports = new ArrayList<>();
+        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
+        SockJsClient sockJsClient = new SockJsClient(transports);
+        WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
+        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        return stompClient;
+    }
+
+    public void connect(String webSocketURL, int port) throws Exception
+    {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        StompSessionHandler stompSessionHandler = new TestSessionHandler()
         {
-            fail("Failed to set up the session handler.");
+            @Override
+            public void afterConnected(final StompSession session, StompHeaders connectedHeaders)
+            {
+                countDownLatch.countDown();
+            }
+        };
+
+        WebSocketStompClient stompClient = this.createStompClient();
+        CompletableFuture<StompSession> futureStompSession = stompClient.connectAsync
+        (
+            webSocketURL, 
+            stompSessionHandler,
+            port
+        );
+
+        if (!countDownLatch.await(3, TimeUnit.SECONDS))
+        {
+            throw new Exception("Failed to connect");
         }
+        this.stompSession = futureStompSession.get();
+    }
+
+    public Subscription subscribeToRoom(String roomName)
+    {
+        StompFrameHandler stompFrameHandler = new StompFrameHandler()
+        {
+            @Override
+            public Type getPayloadType(StompHeaders headers)
+            {
+                return ChatMessageDTO.class;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload)
+            {
+                ChatMessageDTO chatMessage = (ChatMessageDTO) payload;
+                recievedMessages.add(chatMessage);
+            }
+        };
+
+        Subscription subscription = this.stompSession.subscribe
+        (
+            "/topic/room/" + roomName, 
+            stompFrameHandler
+        );
+        return subscription;
+    }
+
+    public Subscription subscribeToRequestedMessages()
+    {
+        StompFrameHandler stompFrameHandler = new StompFrameHandler()
+        {
+            @Override
+            public Type getPayloadType(StompHeaders headers)
+            {
+                return List.class;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload)
+            {
+                List<Map<String, Object>> requestedMessages = (List<Map<String, Object>>) payload;
+                ObjectMapper objectMapper = new ObjectMapper();
+                for (Map<String, Object> messageMap : requestedMessages)
+                {
+                    ChatMessageDTO chatMessage = objectMapper.convertValue(messageMap, ChatMessageDTO.class);
+                    recievedRequestedMessages.add(chatMessage);
+                }
+            }
+        };
+
+        Subscription subscription = stompSession.subscribe
+        (
+            "/user/topic/requested_messages", 
+            stompFrameHandler
+        );
+        return subscription;
     }
 
     public void sendMessage(ClientMessageDTO clientMessage)
     {
-        this.session.send("/app/room/" + this.roomName + "/publish_message", clientMessage);
+        String url = "/app/room/" + this.roomName + "/publish_message";
+        this.stompSession.send(url, clientMessage);
         this.sentMessages.add(clientMessage);
     }
 
@@ -81,21 +158,24 @@ public class ChatTestClient
         this.sendMessage(clientMessage);
     }
 
-
     public void requestMessages(MessageRequestByTimestampDTO messageRequest)
     {
-        this.session.send("/app/room/" + this.roomName + "/request_messages_by_timestamp", messageRequest);
+        String url = "/app/room/" + this.roomName + "/request_messages_by_timestamp";
+        this.stompSession.send(url, messageRequest);
     }
 
-    public void requestMessages(long unixTimestamp, MessageRequestByTimestampType messageRequestType, int messageCountLimit)
+    public void requestMessages(long unixTimestamp, MessageRequestByTimestampType messageRequestType,
+            int messageCountLimit)
     {
-        MessageRequestByTimestampDTO messageRequest = new MessageRequestByTimestampDTO(unixTimestamp, messageRequestType, messageCountLimit);
+        MessageRequestByTimestampDTO messageRequest = new MessageRequestByTimestampDTO(unixTimestamp,
+                messageRequestType, messageCountLimit);
         this.requestMessages(messageRequest);
     }
 
     public void requestMessages(MessageRequestByIDDTO messageRequest)
     {
-        this.session.send("/app/room/" + this.roomName + "/request_messages_by_id", messageRequest);
+        String url = "/app/room/" + this.roomName + "/request_messages_by_id";
+        this.stompSession.send(url, messageRequest);
     }
 
     public void requestMessages(long id, MessageRequestByIDType messageRequestType, int messageCountLimit)
@@ -119,64 +199,5 @@ public class ChatTestClient
         return this.recievedRequestedMessages;
     }
 
-    private void setupStompClient()
-    {
-        List<Transport> transports = new ArrayList<>();
-        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
-        this.sockJsClient = new SockJsClient(transports);
-        this.stompClient = new WebSocketStompClient(sockJsClient);
-        this.stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-    }
 
-    private void setupSessionHandler(CountDownLatch latch)
-    {
-        String roomName = this.roomName;
-        ArrayList<ChatMessageDTO> recievedRequestedMessages = this.recievedRequestedMessages;
-        ChatTestClient client = this;
-        this.sessionHandler = new TestSessionHandler()
-        {
-            @Override
-            public void afterConnected(final StompSession session, StompHeaders connectedHeaders)
-            {
-                client.session = session;
-                session.subscribe("/topic/room/" + roomName, new StompFrameHandler()
-                {
-                    @Override
-                    public Type getPayloadType(StompHeaders headers)
-                    {
-                        return ChatMessageDTO.class;
-                    }
-
-                    @Override
-                    public void handleFrame(StompHeaders headers, Object payload)
-                    {
-                        ChatMessageDTO chatMessage = (ChatMessageDTO) payload;
-                        recievedMessages.add(chatMessage);
-                    }
-                });
-                session.subscribe("/user/topic/requested_messages", new StompFrameHandler()
-                {
-                    @Override
-                    public Type getPayloadType(StompHeaders headers)
-                    {
-                        return List.class;
-                    }
-
-                    @Override
-                    public void handleFrame(StompHeaders headers, Object payload)
-                    {
-                        List<Map<String, Object>> requestedMessages = (List<Map<String, Object>>) payload;
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        for (Map<String, Object> messageMap : requestedMessages)
-                        {
-                            ChatMessageDTO chatMessage = objectMapper.convertValue(messageMap, ChatMessageDTO.class);
-                            recievedRequestedMessages.add(chatMessage);
-                        }
-                    }
-                });
-
-                latch.countDown();
-            }
-        };
-    }
 }

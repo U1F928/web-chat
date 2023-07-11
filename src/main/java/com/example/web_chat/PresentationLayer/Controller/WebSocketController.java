@@ -42,7 +42,7 @@ public class WebSocketController
 
     @MessageMapping("/room/{roomName}/request_messages_by_timestamp")
     @SendToUser("/topic/requested_messages")
-    public List<ChatMessageDTO> requestMessages(@DestinationVariable String roomName, @Payload MessageRequestByTimestampDTO messageRequest)
+    public List<ChatMessageDTO> requestMessagesByTimestamp(@DestinationVariable String roomName, @Payload MessageRequestByTimestampDTO messageRequest)
     {
         List<ChatMessage> requestedMessages = this.messageRequestService.process(roomName, messageRequest);
         List<ChatMessageDTO> requestedMessageDTOs = this.chatMessageMapper.convertToDTO(requestedMessages);
@@ -51,7 +51,7 @@ public class WebSocketController
 
     @MessageMapping("/room/{roomName}/request_messages_by_id")
     @SendToUser("/topic/requested_messages")
-    public List<ChatMessageDTO> requestMessages(@DestinationVariable String roomName, @Payload MessageRequestByIDDTO messageRequest)
+    public List<ChatMessageDTO> requestMessagesByID(@DestinationVariable String roomName, @Payload MessageRequestByIDDTO messageRequest)
     {
         List<ChatMessage> requestedMessages = this.messageRequestService.process(roomName, messageRequest);
         List<ChatMessageDTO> requestedMessageDTOs = this.chatMessageMapper.convertToDTO(requestedMessages);

@@ -1,4 +1,4 @@
-package com.example.web_chat.PresentationLayer;
+package com.example.web_chat.PresentationLayer.Controller;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

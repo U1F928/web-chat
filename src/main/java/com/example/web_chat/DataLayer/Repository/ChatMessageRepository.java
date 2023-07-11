@@ -19,16 +19,16 @@ import com.example.web_chat.DataLayer.Entity.ChatRoom;
  */
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long>
 {
-    @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.creationTimestamp <= :creationTimestamp ORDER BY c.creationTimestamp DESC, c.id DESC")
+    @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.creationTimestamp < :creationTimestamp ORDER BY c.creationTimestamp DESC, c.id DESC")
     List<ChatMessage> findByRoomAndCreationTimestampLessThan(ChatRoom room, long creationTimestamp, Pageable pageable);
 
-    @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.creationTimestamp >= :creationTimestamp ORDER BY c.creationTimestamp ASC, c.id ASC")
+    @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.creationTimestamp > :creationTimestamp ORDER BY c.creationTimestamp ASC, c.id ASC")
     List<ChatMessage> findByRoomAndCreationTimestampGreaterThan(ChatRoom room, long creationTimestamp, Pageable pageable);
 
-    @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.id <= :id ORDER BY c.id DESC")
+    @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.id < :id ORDER BY c.id DESC")
     List<ChatMessage> findByRoomAndIDLessThan(ChatRoom room, long id, Pageable pageable);
 
-    @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.id >= :id ORDER BY c.id ASC")
+    @Query("SELECT c FROM ChatMessage c WHERE c.room = :room AND c.id > :id ORDER BY c.id ASC")
     List<ChatMessage> findByRoomAndIDGreaterThan(ChatRoom room, long id, Pageable pageable);
 
 }
