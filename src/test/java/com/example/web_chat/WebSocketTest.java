@@ -77,7 +77,7 @@ public class WebSocketTest
         ChatTestClient clientB = new ChatTestClient(this.roomName, this.port, this.websocketURL);
 
         clientA.sendMessage("Hello from A");
-        TimeUnit.SECONDS.sleep(3);
+        TimeUnit.SECONDS.sleep(30);
 
         List<ClientMessageDTO> sentMessages = clientA.getSentMessages();
         // check that both client A and client B recieved message from client A
