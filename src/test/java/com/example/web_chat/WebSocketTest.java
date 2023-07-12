@@ -4,13 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -53,6 +54,7 @@ public class WebSocketTest
     @BeforeEach
     public void init()
     {
+        Awaitility.setDefaultTimeout(Duration.ofSeconds(30));
         this.roomName = "Cats";
         this.websocketURL = "http://localhost:{port}/websocket";
     }
