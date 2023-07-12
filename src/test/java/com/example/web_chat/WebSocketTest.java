@@ -2,13 +2,16 @@ package com.example.web_chat;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -51,6 +54,7 @@ public class WebSocketTest
     @BeforeEach
     public void init()
     {
+        Awaitility.setDefaultTimeout(Duration.ofSeconds(30));
         this.roomName = "Cats";
         this.websocketURL = "http://localhost:{port}/websocket";
     }
@@ -66,7 +70,8 @@ public class WebSocketTest
     {
         ChatTestClient clientA = new ChatTestClient(this.roomName, this.port, this.websocketURL);
         clientA.sendMessage("Hello from A");
-        TimeUnit.SECONDS.sleep(3);
+        Awaitility.await().until(() -> clientA.getRecievedMessages().size() == 1);
+
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedMessages());
     }
 
@@ -77,7 +82,8 @@ public class WebSocketTest
         ChatTestClient clientB = new ChatTestClient(this.roomName, this.port, this.websocketURL);
 
         clientA.sendMessage("Hello from A");
-        TimeUnit.SECONDS.sleep(30);
+        Awaitility.await().until(() -> clientA.getRecievedMessages().size() == 1);
+        Awaitility.await().until(() -> clientB.getRecievedMessages().size() == 1);
 
         List<ClientMessageDTO> sentMessages = clientA.getSentMessages();
         // check that both client A and client B recieved message from client A
@@ -85,7 +91,8 @@ public class WebSocketTest
         assertSentMessagesEqualRequested(sentMessages, clientB.getRecievedMessages());
 
         clientB.sendMessage("Hello from B");
-        TimeUnit.SECONDS.sleep(3);
+        Awaitility.await().until(() -> clientA.getRecievedMessages().size() == 2);
+        Awaitility.await().until(() -> clientB.getRecievedMessages().size() == 2);
 
         sentMessages = new ArrayList<ClientMessageDTO>();
         sentMessages.addAll(clientA.getSentMessages());
@@ -103,18 +110,20 @@ public class WebSocketTest
         int messageCount = 3;
         for (int i = 0; i < messageCount; i++)
         {
-            long currentUnixTimestamp = Instant.now().getEpochSecond();
-            clientA.sendMessage("Hello from A from " + currentUnixTimestamp);
-            TimeUnit.SECONDS.sleep(1);
+            clientA.sendMessage("Hello from A " + i);
+            Integer objectI = i;
+            Awaitility.await().until(() -> clientA.getRecievedMessages().size() == objectI + 1);
+
         }
-        TimeUnit.SECONDS.sleep(3);
+        Awaitility.await().until(() -> clientA.getRecievedMessages().size() == messageCount);
 
         assertEquals(List.of(), clientA.getRecievedRequestedMessages());
 
-        long currentUnixTimestamp = Instant.now().getEpochSecond();
+        long oneHourInSeconds = 60 * 60;
+        long currentUnixTimestamp = Instant.now().getEpochSecond() + oneHourInSeconds;
         MessageRequestByTimestampType requestType = MessageRequestByTimestampType.LESS_THAN_TIMESTAMP;
         clientA.requestMessages(currentUnixTimestamp, requestType, messageCount);
-        TimeUnit.SECONDS.sleep(3);
+        Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() == messageCount);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedRequestedMessages());
     }
@@ -127,10 +136,15 @@ public class WebSocketTest
         long currentUnixTimestamp = Instant.now().getEpochSecond();
         MessageRequestByTimestampType requestType = MessageRequestByTimestampType.LESS_THAN_TIMESTAMP;
         clientA.requestMessages(currentUnixTimestamp, requestType, 10);
-        TimeUnit.SECONDS.sleep(3);
 
-        List<ChatMessageDTO> recievedRequestedTexts = clientA.getRecievedRequestedMessages();
-        assertEquals(List.of(), recievedRequestedTexts);
+        assertThrows
+        (
+            ConditionTimeoutException.class, 
+            () -> 
+            {
+                Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() > 0);
+            }
+        );
     }
 
     @Test
@@ -141,16 +155,15 @@ public class WebSocketTest
         int messageCount = 3;
         for (int i = 0; i < messageCount; i++)
         {
-            long currentUnixTimestamp = Instant.now().getEpochSecond();
-            clientA.sendMessage("Hello from A from " + currentUnixTimestamp);
-            TimeUnit.SECONDS.sleep(1);
+            clientA.sendMessage("Hello from A " + i);
+            Integer objectI = i;
+            Awaitility.await().until(() -> clientA.getRecievedMessages().size() == objectI + 1);
         }
-        TimeUnit.SECONDS.sleep(3);
 
         long creationTimestampOfFirstMessageSent = clientA.getRecievedMessages().get(0).getCreationTimestamp();
         MessageRequestByTimestampType requestType = MessageRequestByTimestampType.GREATER_THAN_TIMESTAMP;
         clientA.requestMessages(creationTimestampOfFirstMessageSent - 1, requestType, messageCount);
-        TimeUnit.SECONDS.sleep(3);
+        Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() == messageCount);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedRequestedMessages());
     }
@@ -162,10 +175,14 @@ public class WebSocketTest
 
         MessageRequestByTimestampType requestType = MessageRequestByTimestampType.GREATER_THAN_TIMESTAMP;
         clientA.requestMessages(0, requestType, 10);
-        TimeUnit.SECONDS.sleep(3);
-
-        List<ChatMessageDTO> recievedRequestedTexts = clientA.getRecievedRequestedMessages();
-        assertEquals(List.of(), recievedRequestedTexts);
+        assertThrows
+        (
+            ConditionTimeoutException.class, 
+            () -> 
+            {
+                Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() > 0);
+            }
+        );
     }
 
     @Test
@@ -175,19 +192,20 @@ public class WebSocketTest
         ChatTestClient clientB = new ChatTestClient(this.roomName, this.port, this.websocketURL);
 
         clientA.sendMessage("Hello from A");
-        TimeUnit.SECONDS.sleep(3);
+        Awaitility.await().until(() -> clientA.getRecievedMessages().size() == 1);
 
         assertEquals(List.of(), clientA.getRecievedRequestedMessages());
         assertEquals(List.of(), clientB.getRecievedRequestedMessages());
 
         int requestedMessageCountLimit = 1;
-        long currentUnixTimestamp = Instant.now().getEpochSecond();
+        long oneHourInSeconds = 60 * 60;
+        long currentUnixTimestamp = Instant.now().getEpochSecond() + oneHourInSeconds;
         MessageRequestByTimestampType requestType = MessageRequestByTimestampType.LESS_THAN_TIMESTAMP;
         clientB.requestMessages(currentUnixTimestamp, requestType, requestedMessageCountLimit);
-        TimeUnit.SECONDS.sleep(3);
+        Awaitility.await().until(() -> clientB.getRecievedRequestedMessages().size() > 0);
 
         assertEquals(List.of(), clientA.getRecievedRequestedMessages());
-        assertEquals(requestedMessageCountLimit, clientB.getRecievedRequestedMessages().size());
+        assertSentMessagesEqualRequested(clientA.getSentMessages(), clientB.getRecievedRequestedMessages());
     }
 
     @Test
@@ -198,20 +216,19 @@ public class WebSocketTest
         int messageCount = 3;
         for (int i = 0; i < messageCount; i++)
         {
-            long currentUnixTimestamp = Instant.now().getEpochSecond();
-            clientA.sendMessage("Hello from A from " + currentUnixTimestamp);
-            TimeUnit.SECONDS.sleep(1);
-        }
-        TimeUnit.SECONDS.sleep(3);
+            clientA.sendMessage("Hello from A from " + i);
+            Integer objectI = i;
+            Awaitility.await().until(() -> clientA.getRecievedMessages().size() == objectI + 1);
 
-        long creationTimestampOfFirstMessageSent = clientA.getRecievedMessages().get(0).getCreationTimestamp();
+        }
+        Awaitility.await().until(() -> clientA.getRecievedMessages().size() == messageCount);
+
         int messageCountLimit = 2;
         MessageRequestByTimestampType requestType = MessageRequestByTimestampType.GREATER_THAN_TIMESTAMP;
-        clientA.requestMessages(creationTimestampOfFirstMessageSent, requestType, messageCountLimit);
-        TimeUnit.SECONDS.sleep(3);
+        clientA.requestMessages(0, requestType, messageCountLimit);
+        Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() > 0);
 
-        List<ChatMessageDTO> recievedRequestedTexts = clientA.getRecievedRequestedMessages(); 
-        assertEquals(recievedRequestedTexts.size(), messageCountLimit);
+        assertEquals(messageCountLimit, clientA.getRecievedRequestedMessages().size());
     }
 
     @Test
@@ -222,15 +239,19 @@ public class WebSocketTest
         ChatTestClient clientB = new ChatTestClient(nonExistentRoomName, this.port, this.websocketURL);
 
         clientA.sendMessage("Hello from A");
-        TimeUnit.SECONDS.sleep(3);
+        Awaitility.await().until(() -> clientA.getRecievedMessages().size() == 1);
 
         long currentUnixTimestamp = Instant.now().getEpochSecond();
         MessageRequestByTimestampType requestType = MessageRequestByTimestampType.LESS_THAN_TIMESTAMP;
         clientB.requestMessages(currentUnixTimestamp, requestType, 10);
-        TimeUnit.SECONDS.sleep(3);
-
-        assertEquals(List.of(), clientB.getRecievedRequestedMessages());
-
+        assertThrows
+        (
+            ConditionTimeoutException.class, 
+            () -> 
+            {
+                Awaitility.await().until(() -> clientB.getRecievedRequestedMessages().size() > 0);
+            }
+        );
     }
 
     @Test
@@ -242,14 +263,16 @@ public class WebSocketTest
         for (int i = 0; i < messageCount; i++)
         {
             clientA.sendMessage("Hello " + i);
-            TimeUnit.SECONDS.sleep(1);
-        }
-        TimeUnit.SECONDS.sleep(3);
+            Integer objectI = i;
+            Awaitility.await().until(() -> clientA.getRecievedMessages().size() == objectI + 1);
 
-        long id = messageCount;
+        }
+        Awaitility.await().until(() -> clientA.getRecievedMessages().size() == messageCount);
+
+        long id = messageCount + 1;
         MessageRequestByIDType requestType = MessageRequestByIDType.LESS_THAN_ID;
-        clientA.requestMessages(id + 1, requestType, messageCount);
-        TimeUnit.SECONDS.sleep(3);
+        clientA.requestMessages(id, requestType, messageCount);
+        Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() == messageCount);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedRequestedMessages());
     }
@@ -263,14 +286,16 @@ public class WebSocketTest
         for (int i = 0; i < messageCount; i++)
         {
             clientA.sendMessage("Hello " + i);
-            TimeUnit.SECONDS.sleep(1);
+            Integer objectI = i;
+            Awaitility.await().until(() -> clientA.getRecievedMessages().size() == objectI + 1);
+
         }
-        TimeUnit.SECONDS.sleep(3);
+        Awaitility.await().until(() -> clientA.getRecievedMessages().size() == messageCount);
 
         long id = 0;
         MessageRequestByIDType requestType = MessageRequestByIDType.GREATER_THAN_ID;
         clientA.requestMessages(id, requestType, messageCount);
-        TimeUnit.SECONDS.sleep(3);
+        Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() == messageCount);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedRequestedMessages());
     }
