@@ -37,3 +37,14 @@ jobs:
     - name: Run tests
       run: ./mvnw test
 
+    - name: Archive test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-report
+        path: target/surefire-reports
+
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v3
+      with:
+        name: code-coverage-report
+        path: target/site/jacoco/
