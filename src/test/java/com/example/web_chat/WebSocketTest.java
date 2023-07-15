@@ -54,7 +54,6 @@ public class WebSocketTest
     @BeforeEach
     public void init()
     {
-        Awaitility.setDefaultTimeout(Duration.ofSeconds(30));
         this.roomName = "Cats";
         this.websocketURL = "http://localhost:{port}/websocket";
     }
@@ -282,7 +281,7 @@ public class WebSocketTest
     {
         ChatTestClient clientA = new ChatTestClient(this.roomName, this.port, this.websocketURL);
 
-        int messageCount = 0;
+        int messageCount = 3;
         for (int i = 0; i < messageCount; i++)
         {
             clientA.sendMessage("Hello " + i);
