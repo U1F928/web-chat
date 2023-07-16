@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
@@ -24,8 +23,6 @@ import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestByIDTyp
 import com.example.web_chat.PresentationLayer.DTO.Incoming.MessageRequestByTimestampType;
 import com.example.web_chat.PresentationLayer.DTO.Outgoing.ChatMessageDTO;
 
-// set active Spring profile to "test", i.e. use application-test.properties
-@ActiveProfiles("test")
 /* 
     recreate Spring context before each test method, causes warnings 
     https://stackoverflow.com/questions/28105803/tomcat8-memory-leak/

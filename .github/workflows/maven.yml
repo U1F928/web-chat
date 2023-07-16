@@ -24,27 +24,29 @@ jobs:
     
     - uses: actions/checkout@v3
     
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-        
-    - name: Build
-      run: ./mvnw clean && ./mvnw package -DskipTests
-      
-    - name: Run tests
-      run: ./mvnw test
+    - name: Pull a Postgres image and run the image inside a container
+      run: docker run --name web-chat-database -p 5432:5432 -e POSTGRES_PASSWORD=mypassword -e POSTGRES_USER=myusername -e POSTGRES_DB=web-chat-postgres -d postgres
+    
+    - name: Build a web-chat-api-server image
+      run: docker build -t web-chat-api-server --target=build_stage .
+
+    - name: Run integration tests
+      run: docker run --name web-chat-api-server -p 8080:8080 -e DATABASE_URL="jdbc:postgresql://172.17.0.1:5432/web-chat-postgres" -e DATABASE_USERNAME=myusername -e DATABASE_PASSWORD=mypassword web-chat-api-server ./mvnw test -Dspring.profiles.active=test-with-Postgres
+
+    - name: Copy test results report from the web-chat-api-server container
+      run: mkdir test-results-report && docker cp web-chat-api-server:target/surefire-reports test-results-report/
+
+    - name: Copy code coverage report from the web-chat-api-server container
+      run: mkdir code-coverage-report && docker cp web-chat-api-server:target/site/jacoco code-coverage-report/ 
 
     - name: Archive test results
       uses: actions/upload-artifact@v3
       with:
         name: test-results-report
-        path: target/surefire-reports
+        path: test-results-report
 
-    - name: Archive code coverage results
+    - name: Archive code coverage report
       uses: actions/upload-artifact@v3
       with:
         name: code-coverage-report
-        path: target/site/jacoco/
+        path: code-coverage-report
