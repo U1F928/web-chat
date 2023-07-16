@@ -87,14 +87,28 @@ public class ChatTestClient
         CompletableFuture<StompSession> futureStompSession = stompClient.connectAsync(webSocketURL, stompSessionHandler,
                 port);
 
-        if (!countDownLatch.await(3, TimeUnit.SECONDS))
+        if (!countDownLatch.await(5, TimeUnit.SECONDS))
         {
             throw new Exception("Failed to connect");
         }
         this.stompSession = futureStompSession.get();
     }
 
-    public void subscribeToRoom(String roomName) throws Exception
+    public Subscription subscribe(String destination, StompFrameHandler stompFrameHandler) throws Exception
+    {
+        CountDownLatch latch = new CountDownLatch(1);
+        this.stompSession.setAutoReceipt(true);
+        Subscription subscription = this.stompSession.subscribe(destination, stompFrameHandler);
+        subscription.addReceiptTask(latch::countDown);
+        if (!latch.await(5, TimeUnit.SECONDS))
+        {
+            throw new Exception("Failed to subscribe");
+        }
+        this.stompSession.setAutoReceipt(false);
+        return subscription;
+    }
+
+    public Subscription subscribeToRoom(String roomName) throws Exception
     {
         StompFrameHandler stompFrameHandler = new StompFrameHandler()
         {
@@ -112,27 +126,12 @@ public class ChatTestClient
             }
         };
 
-        StompHeaders stompHeaders = new StompHeaders();
-        stompHeaders.setDestination("/topic/room/" + roomName);
-        stompHeaders.setReceipt("r1");
-
-        CountDownLatch latch = new CountDownLatch(1);
-        this.stompSession.subscribe(stompHeaders, stompFrameHandler).addReceiptTask(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                latch.countDown();
-            }
-        });
-
-        if (!latch.await(5, TimeUnit.SECONDS))
-        {
-            throw new Exception("Failed to subscribe");
-        }
+        String destination = "/topic/room/" + roomName;
+        Subscription subscription = this.subscribe(destination, stompFrameHandler);
+        return subscription;
     }
 
-    public Subscription subscribeToRequestedMessages()
+    public Subscription subscribeToRequestedMessages() throws Exception
     {
         StompFrameHandler stompFrameHandler = new StompFrameHandler()
         {
@@ -155,7 +154,8 @@ public class ChatTestClient
             }
         };
 
-        Subscription subscription = stompSession.subscribe("/user/topic/requested_messages", stompFrameHandler);
+        String destination = "/user/topic/requested_messages";
+        Subscription subscription = this.subscribe(destination, stompFrameHandler);
         return subscription;
     }
 
