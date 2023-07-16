@@ -32,3 +32,21 @@ jobs:
 
     - name: Run integration tests with the Postgres database
       run: docker run --name web-chat-api-server -p 8080:8080 -e DATABASE_URL="jdbc:postgresql://172.17.0.1:5432/web-chat-postgres" -e DATABASE_USERNAME=myusername -e DATABASE_PASSWORD=mypassword web-chat-api-server ./mvnw test -Dspring.profiles.active=test-with-Postgres
+
+    - name: Copy test results from the web-chat-api-server container
+      run: docker cp web-chat-api-server:target/surefire-reports .
+
+    - name: Copy code coverage report from the web-chat-api-server container
+      run: docker cp web-chat-api-server:target/site/jacoco/ . 
+
+    - name: Archive test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-report
+        path: surefire-reports
+
+    - name: Archive code coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: code-coverage-report
+        path: jacoco
