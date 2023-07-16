@@ -14,6 +14,7 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.messaging.simp.stomp.StompSession.Subscription;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -58,6 +59,11 @@ public class ChatTestClient
         SockJsClient sockJsClient = new SockJsClient(transports);
         WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        ThreadPoolTaskScheduler messageBrokerTaskScheduler = new ThreadPoolTaskScheduler();
+        messageBrokerTaskScheduler.setPoolSize(3);
+        messageBrokerTaskScheduler.initialize();
+        stompClient.setTaskScheduler(messageBrokerTaskScheduler);
+        stompClient.setDefaultHeartbeat(new long[] { 0, 0 });
         return stompClient;
     }
 
@@ -74,21 +80,31 @@ public class ChatTestClient
         };
 
         WebSocketStompClient stompClient = this.createStompClient();
-        CompletableFuture<StompSession> futureStompSession = stompClient.connectAsync
-        (
-            webSocketURL, 
-            stompSessionHandler,
-            port
-        );
+        CompletableFuture<StompSession> futureStompSession = stompClient.connectAsync(webSocketURL, stompSessionHandler,
+                port);
 
-        if (!countDownLatch.await(3, TimeUnit.SECONDS))
+        if (!countDownLatch.await(5, TimeUnit.SECONDS))
         {
             throw new Exception("Failed to connect");
         }
         this.stompSession = futureStompSession.get();
     }
 
-    public Subscription subscribeToRoom(String roomName)
+    public Subscription subscribe(String destination, StompFrameHandler stompFrameHandler) throws Exception
+    {
+        CountDownLatch latch = new CountDownLatch(1);
+        this.stompSession.setAutoReceipt(true);
+        Subscription subscription = this.stompSession.subscribe(destination, stompFrameHandler);
+        subscription.addReceiptTask(latch::countDown);
+        if (!latch.await(5, TimeUnit.SECONDS))
+        {
+            throw new Exception("Failed to subscribe");
+        }
+        this.stompSession.setAutoReceipt(false);
+        return subscription;
+    }
+
+    public Subscription subscribeToRoom(String roomName) throws Exception
     {
         StompFrameHandler stompFrameHandler = new StompFrameHandler()
         {
@@ -106,15 +122,12 @@ public class ChatTestClient
             }
         };
 
-        Subscription subscription = this.stompSession.subscribe
-        (
-            "/topic/room/" + roomName, 
-            stompFrameHandler
-        );
+        String destination = "/topic/room/" + roomName;
+        Subscription subscription = this.subscribe(destination, stompFrameHandler);
         return subscription;
     }
 
-    public Subscription subscribeToRequestedMessages()
+    public Subscription subscribeToRequestedMessages() throws Exception
     {
         StompFrameHandler stompFrameHandler = new StompFrameHandler()
         {
@@ -137,11 +150,8 @@ public class ChatTestClient
             }
         };
 
-        Subscription subscription = stompSession.subscribe
-        (
-            "/user/topic/requested_messages", 
-            stompFrameHandler
-        );
+        String destination = "/user/topic/requested_messages";
+        Subscription subscription = this.subscribe(destination, stompFrameHandler);
         return subscription;
     }
 
@@ -198,6 +208,5 @@ public class ChatTestClient
     {
         return this.recievedRequestedMessages;
     }
-
 
 }
