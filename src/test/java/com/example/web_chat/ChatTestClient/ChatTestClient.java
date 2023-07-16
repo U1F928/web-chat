@@ -31,9 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ChatTestClient
 {
-    // @Autowired
-    // private TaskScheduler messageBrokerTaskScheduler;
-
     private StompSession stompSession;
 
     public String roomName;
@@ -66,8 +63,7 @@ public class ChatTestClient
         messageBrokerTaskScheduler.setPoolSize(3);
         messageBrokerTaskScheduler.initialize();
         stompClient.setTaskScheduler(messageBrokerTaskScheduler);
-        stompClient.setDefaultHeartbeat(new long[]
-        { 0, 0 });
+        stompClient.setDefaultHeartbeat(new long[] { 0, 0 });
         return stompClient;
     }
 
