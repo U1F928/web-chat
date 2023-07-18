@@ -58,7 +58,9 @@ public class WebSocketTest
     public void connectAndSubscribeTest() throws Exception
     {
         ChatTestClient clientA = new ChatTestClient(this.roomName, this.port, this.websocketURL);
+        clientA.disconnect();
     }
+
 
     @Test
     public void soloSendAndRecieveTest() throws Exception
@@ -68,6 +70,7 @@ public class WebSocketTest
         Awaitility.await().until(() -> clientA.getRecievedMessages().size() == 1);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedMessages());
+        clientA.disconnect();
     }
 
     @Test
@@ -95,6 +98,9 @@ public class WebSocketTest
         assertSentMessagesEqualRequested(sentMessages, clientA.getRecievedMessages());
         assertSentMessagesEqualRequested(sentMessages, clientB.getRecievedMessages());
 
+        clientA.disconnect();
+        clientB.disconnect();
+
     }
 
     @Test
@@ -121,6 +127,8 @@ public class WebSocketTest
         Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() == messageCount);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedRequestedMessages());
+
+        clientA.disconnect();
     }
 
     @Test
@@ -140,6 +148,8 @@ public class WebSocketTest
                 Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() > 0);
             }
         );
+
+        clientA.disconnect();
     }
 
     @Test
@@ -161,6 +171,8 @@ public class WebSocketTest
         Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() == messageCount);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedRequestedMessages());
+
+        clientA.disconnect();
     }
 
     @Test
@@ -178,6 +190,8 @@ public class WebSocketTest
                 Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() > 0);
             }
         );
+
+        clientA.disconnect();
     }
 
     @Test
@@ -201,6 +215,9 @@ public class WebSocketTest
 
         assertEquals(List.of(), clientA.getRecievedRequestedMessages());
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientB.getRecievedRequestedMessages());
+
+        clientA.disconnect();
+        clientB.disconnect();
     }
 
     @Test
@@ -224,6 +241,8 @@ public class WebSocketTest
         Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() > 0);
 
         assertEquals(messageCountLimit, clientA.getRecievedRequestedMessages().size());
+
+        clientA.disconnect();
     }
 
     @Test
@@ -247,6 +266,9 @@ public class WebSocketTest
                 Awaitility.await().until(() -> clientB.getRecievedRequestedMessages().size() > 0);
             }
         );
+
+        clientA.disconnect();
+        clientB.disconnect();
     }
 
     @Test
@@ -270,6 +292,8 @@ public class WebSocketTest
         Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() == messageCount);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedRequestedMessages());
+
+        clientA.disconnect();
     }
 
     @Test
@@ -293,5 +317,7 @@ public class WebSocketTest
         Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() == messageCount);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedRequestedMessages());
+
+        clientA.disconnect();
     }
 }

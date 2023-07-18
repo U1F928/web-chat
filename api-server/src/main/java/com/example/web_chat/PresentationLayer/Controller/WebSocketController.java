@@ -31,7 +31,9 @@ public class WebSocketController
     @Autowired
     private ChatMessageMapper chatMessageMapper;
 
-    @MessageMapping("/room/{roomName}/publish_message") @SendTo("/topic/room/{roomName}")
+    @MessageMapping("/room/{roomName}/publish_message") 
+    // For topic segment separators 'AMQP 0-9-1' used by RabbitMQ uses dots
+    @SendTo("/topic/room.{roomName}")
     public ChatMessageDTO publishMessage(@DestinationVariable String roomName, @Payload ClientMessageDTO clientMessage)
             throws Exception
     {

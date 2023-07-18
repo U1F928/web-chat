@@ -52,6 +52,13 @@ public class ChatTestClient
         this.subscribeToRoom(roomName);
     }
 
+    // avoid AbortedException: io.netty.channel.StacklessClosedChannelException
+    // https://github.com/reactor/reactor-netty/issues/1870
+    public void disconnect()
+    {
+        this.stompSession.disconnect(null);
+    }
+
     private WebSocketStompClient createStompClient()
     {
         List<Transport> transports = new ArrayList<>();
@@ -122,7 +129,7 @@ public class ChatTestClient
             }
         };
 
-        String destination = "/topic/room/" + roomName;
+        String destination = "/topic/room." + roomName;
         Subscription subscription = this.subscribe(destination, stompFrameHandler);
         return subscription;
     }
