@@ -24,9 +24,13 @@ jobs:
     
     - uses: actions/checkout@v3
     
-    - name: Run integration tests
+    - name: Build the containers
       run: docker-compose build
+
+    - name: Run the integration tests
       run: docker-compose --env-file=.env --profile test up --abort-on-container-exit
+
+    - name: Remove the containers
       run: docker-compose --env-file=.env --profile test down
 
 #    - name: Copy test results report from the web-chat-api container
