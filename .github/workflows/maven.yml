@@ -28,7 +28,7 @@ jobs:
       run: docker-compose build
 
     - name: Run the integration tests
-      run: docker-compose --env-file=.env --profile test up --abort-on-container-exit
+      run: docker-compose --env-file=.env --profile test up --build --abort-on-container-exit
 
     - name: Remove the containers
       run: docker-compose --env-file=.env --profile test down

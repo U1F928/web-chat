@@ -1,7 +1,8 @@
 # Run locally
 ```bash
-docker-compose build
-docker-compose --env-file=.env --profile production up --detach
+# Rebuild the images and start the containers
+docker-compose --env-file=.env --profile production up --build --detach 
+# Stop and remove the containers
 docker-compose --env-file=.env --profile production down
 ```
 
@@ -10,7 +11,8 @@ docker-compose --env-file=.env --profile production down
 Run integration tests:
 
 ```bash
-docker-compose build
-docker-compose --env-file=.env --profile test up --abort-on-container-exit
+# Rebuild the images and start the containers, stop the containers when the tests finish
+docker-compose --env-file=.env --profile test up --build --abort-on-container-exit 
+# Remove the containers
 docker-compose --env-file=.env --profile test down
 ```
