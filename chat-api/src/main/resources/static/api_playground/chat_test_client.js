@@ -67,7 +67,7 @@ class ChatTestClient
 
     subscribeToRoom(roomName)
     {
-        let subscription = this.stompClient.subscribe('/topic/room/' + roomName, function (greeting)
+        let subscription = this.stompClient.subscribe('/topic/room.' + roomName, function (greeting)
         {
             console.log(JSON.parse(greeting.body).content);
         });
