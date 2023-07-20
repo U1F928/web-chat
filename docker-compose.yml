@@ -1,0 +1,73 @@
+version: "3.4"
+services:
+
+  database:
+    image: postgres
+    profiles: ["test", "production"]
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    ports:
+      - ${DATABASE_PORT}:5432
+
+  message-broker:
+    image: message-broker
+    profiles: ["test", "production"]
+    build: 
+      context: message-broker
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS
+    ports:
+      - ${MESSAGE_BROKER_STOMP_PORT}:61613
+      - ${MESSAGE_BROKER_MANAGEMENT_PORT}:15672
+
+  chat-api:
+    image: chat-api
+    profiles: ["production"]
+    depends_on:
+      - database
+      - message-broker
+
+    build: 
+      context: chat-api
+      dockerfile: Dockerfile
+
+    environment:
+      - DATABASE_URL
+      - DATABASE_USERNAME
+      - DATABASE_PASSWORD
+      - MESSAGE_BROKER_URL
+      - MESSAGE_BROKER_PORT
+      - MESSAGE_BROKER_USERNAME
+      - MESSAGE_BROKER_PASSWORD
+
+    ports:
+      - ${CHAT_API_PORT}:8080
+
+  chat-api-test:
+    profiles: ["test"]
+    depends_on:
+      - database
+      - message-broker
+
+    build: 
+      context: chat-api
+      dockerfile: Dockerfile
+      target: build_stage
+
+    environment:
+      - DATABASE_URL
+      - DATABASE_USERNAME
+      - DATABASE_PASSWORD
+      - MESSAGE_BROKER_URL
+      - MESSAGE_BROKER_PORT
+      - MESSAGE_BROKER_USERNAME
+      - MESSAGE_BROKER_PASSWORD
+
+    ports:
+      - ${CHAT_API_PORT}:8080
+
+    command: ./mvnw test -Dspring.profiles.active=test-with-Postgres-database
