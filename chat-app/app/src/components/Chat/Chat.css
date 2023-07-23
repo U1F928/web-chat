@@ -1,0 +1,88 @@
+body
+{
+	margin: 0;
+	padding: 0;
+}
+#chat
+{
+	height: 95%;
+	width: 95%;
+	position: fixed;
+	transform: translateX(+2.5%) translateY(+2.5%);
+	box-sizing: border-box;
+	display: grid;
+	grid-template-rows: min-content auto min-content;
+	background-color: #fff;
+	font-family: "Calibri", "Roboto", sans-serif;
+	border: 2px solid grey;
+	border-radius: 5px;
+}
+#room-name
+{
+	box-sizing: border-box;
+	border-bottom: 2px solid grey;
+	color: rgb(75, 74, 74);
+	font-size: 1.5em;
+	text-align: center;
+	overflow-x: auto;
+}
+#comment-section
+{
+	overflow-y: scroll;
+	border-bottom: 2px solid grey; 
+}
+#loading-icon
+{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	height: 1.2em;
+	width: 1.2em;
+}
+.comment
+{
+	margin: 0.2em;
+	padding: 0.5em;
+	font-size: 1.2em;
+	word-break: break-all;
+	clear:both;
+	float:left;
+	border-radius: 2px;
+	background-color: #34C759;
+	color: white;
+}
+#send-comment
+{
+	display: grid;
+	grid-template-columns: minmax(min-content, auto) minmax(min-content, 15%);
+	word-wrap: break-word;
+	margin: 0.1em;
+	overflow-x: auto;
+}
+#comment-form
+{
+	box-sizing: border-box;
+	overflow: hidden;
+	color: grey;
+	word-break: break-all;
+	overflow: hidden;
+	font-size: 1.2em;
+	border: none;
+	outline: none;
+}
+#send-button
+{
+	overflow: hidden;
+	font-size: min(5vw, 1.2em);
+	background-color: #34C759;
+	color: white;
+	border: 2px solid #1d7233;
+	cursor: pointer;
+	word-break: break-all;
+	border-radius: 2px;
+}
+#send-button:hover
+{
+	background-color: white;
+	color: #34C759;
+}

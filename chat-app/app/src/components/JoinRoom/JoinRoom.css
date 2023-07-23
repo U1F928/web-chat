@@ -1,0 +1,42 @@
+body
+{
+	overflow-y: hidden;
+	background-color: white;
+	margin: 0;
+	padding: 0;
+}
+
+#join-form
+{
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#room-name-input
+{
+	border: grey solid 2px;
+	border-radius: 5px;
+	font-size: min(1.5em, 5vw);
+	padding: min(0.5em, 2vw);
+	margin-bottom: 2vh;
+}
+
+#join-button
+{
+	border: #1d7233 solid 2px;
+	background-color: #34C759;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: min(1.5em, 5vw);
+	padding: min(0.5em, 2vw);
+	color: white;
+}
+
+#join-button:hover
+{
+	color: #34C759;
+	background-color: white;
+}
