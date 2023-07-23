@@ -15,7 +15,7 @@ function Chat(roomName : string)
 		</div>
 
 		<span id="send-comment">
-			<input id="comment-form" type="text" name="comment_text" placeholder="Aa">
+			<input id="comment-form" type="text" name="comment_text" placeholder="Aa"> </input>
 			<button id="send-button"> &#10140; </button>
 		</span>
 	</div>
