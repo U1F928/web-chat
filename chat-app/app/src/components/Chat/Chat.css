@@ -6,7 +6,7 @@ html,
 }
 
 #root {
-	min-width: 100vw; /* just width does not work
+	min-width: 100vw; /* just width does not work */
 	height: 100vh;
 }
 
