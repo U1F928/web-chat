@@ -182,10 +182,10 @@ public class ChatTestClient
     }
 
     public void requestMessages(long unixTimestamp, MessageRequestByTimestampType messageRequestType,
-            int messageCountLimit)
+            int pageSize, int pageNumber)
     {
         MessageRequestByTimestampDTO messageRequest = new MessageRequestByTimestampDTO(unixTimestamp,
-                messageRequestType, messageCountLimit);
+                messageRequestType, pageSize, pageNumber);
         this.requestMessages(messageRequest);
     }
 
