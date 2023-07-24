@@ -1,14 +1,19 @@
-body
-{
+body,
+html,
+#root {
 	margin: 0;
 	padding: 0;
 }
-#chat
-{
+
+#root {
+	min-width: 100vw; /* just width does not work
+	height: 100vh;
+}
+
+#chat {
 	height: 95%;
 	width: 95%;
-	position: fixed;
-	transform: translateX(+2.5%) translateY(+2.5%);
+	transform: translateX(2.5%) translateY(2.5%);
 	box-sizing: border-box;
 	display: grid;
 	grid-template-rows: min-content auto min-content;
@@ -17,8 +22,8 @@ body
 	border: 2px solid grey;
 	border-radius: 5px;
 }
-#room-name
-{
+
+#room-name {
 	box-sizing: border-box;
 	border-bottom: 2px solid grey;
 	color: rgb(75, 74, 74);
@@ -26,41 +31,41 @@ body
 	text-align: center;
 	overflow-x: auto;
 }
-#comment-section
-{
+
+#comment-section {
 	overflow-y: scroll;
-	border-bottom: 2px solid grey; 
+	border-bottom: 2px solid grey;
 }
-#loading-icon
-{
+
+#loading-icon {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
 	height: 1.2em;
 	width: 1.2em;
 }
-.comment
-{
+
+.comment {
 	margin: 0.2em;
 	padding: 0.5em;
 	font-size: 1.2em;
 	word-break: break-all;
-	clear:both;
-	float:left;
+	clear: both;
+	float: left;
 	border-radius: 2px;
 	background-color: #34C759;
 	color: white;
 }
-#send-comment
-{
+
+#send-comment {
 	display: grid;
 	grid-template-columns: minmax(min-content, auto) minmax(min-content, 15%);
 	word-wrap: break-word;
 	margin: 0.1em;
 	overflow-x: auto;
 }
-#comment-form
-{
+
+#comment-form {
 	box-sizing: border-box;
 	overflow: hidden;
 	color: grey;
@@ -70,8 +75,8 @@ body
 	border: none;
 	outline: none;
 }
-#send-button
-{
+
+#send-button {
 	overflow: hidden;
 	font-size: min(5vw, 1.2em);
 	background-color: #34C759;
@@ -81,8 +86,8 @@ body
 	word-break: break-all;
 	border-radius: 2px;
 }
-#send-button:hover
-{
+
+#send-button:hover {
 	background-color: white;
 	color: #34C759;
 }

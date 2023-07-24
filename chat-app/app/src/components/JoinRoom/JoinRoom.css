@@ -19,7 +19,7 @@ body
 {
 	border: grey solid 2px;
 	border-radius: 5px;
-	font-size: min(1.5em, 5vw);
+	font-size: min(2.5em, 5vw);
 	padding: min(0.5em, 2vw);
 	margin-bottom: 2vh;
 }
@@ -30,7 +30,7 @@ body
 	background-color: #34C759;
 	border-radius: 5px;
 	cursor: pointer;
-	font-size: min(1.5em, 5vw);
+	font-size: min(2.5em, 5vw);
 	padding: min(0.5em, 2vw);
 	color: white;
 }

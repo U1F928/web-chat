@@ -1,11 +1,16 @@
 import './App.css'
-//import Hello from './components/Hello/Hello'
+import { Route, Routes } from 'react-router-dom'
+
 import JoinRoom from './components/JoinRoom/JoinRoom'
+import Chat from './components/Chat/Chat'
 
 function App () 
 {
   return (
-    <JoinRoom> </JoinRoom>
+      <Routes>
+        <Route path="/" element={<JoinRoom />}/> 
+        <Route path="/:roomName" element={<Chat />}/> 
+      </Routes>
   )
 }
 
