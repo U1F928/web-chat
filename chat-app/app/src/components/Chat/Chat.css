@@ -59,7 +59,7 @@ html,
 
 #send-comment {
 	display: grid;
-	grid-template-columns: minmax(min-content, auto) minmax(min-content, 15%);
+	grid-template-columns: auto min-content;
 	word-wrap: break-word;
 	margin: 0.1em;
 	overflow-x: auto;
