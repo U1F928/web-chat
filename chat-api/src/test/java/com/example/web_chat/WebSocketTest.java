@@ -132,6 +132,35 @@ public class WebSocketTest
     }
 
     @Test
+    public void messageRequestLessThanTimestampWithPaging() throws Exception
+    {
+        ChatTestClient clientA = new ChatTestClient(this.roomName, this.port, this.websocketURL);
+
+        int messageCount = 3;
+        for (int i = 0; i < messageCount; i++)
+        {
+            clientA.sendMessage("Hello from A " + i);
+            Integer objectI = i;
+            Awaitility.await().until(() -> clientA.getRecievedMessages().size() == objectI + 1);
+        }
+
+        long oneHourInSeconds = 60 * 60;
+        long currentUnixTimestamp = Instant.now().getEpochSecond() + oneHourInSeconds;
+        MessageRequestByTimestampType requestType = MessageRequestByTimestampType.LESS_THAN_TIMESTAMP;
+        for (int i = 0; i < messageCount; i++)
+        {
+            Integer objectI = i;
+            clientA.requestMessages(currentUnixTimestamp, requestType, 1, i);
+            Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() == objectI + 1);
+            List<ChatMessageDTO> requestedReceivedMessages = clientA.getRecievedRequestedMessages();
+            ChatMessageDTO lastRecievedRequestedMessage = requestedReceivedMessages.get(requestedReceivedMessages.size() - 1);
+            assertEquals(clientA.getSentMessages().get(messageCount - i - 1).getText(), lastRecievedRequestedMessage.getText());
+        }
+
+        clientA.disconnect();
+    }
+
+    @Test
     public void requestNonExistentMessagesWithLessThanTimestamp() throws Exception
     {
         ChatTestClient clientA = new ChatTestClient(this.roomName, this.port, this.websocketURL);
@@ -174,6 +203,36 @@ public class WebSocketTest
 
         clientA.disconnect();
     }
+
+    @Test
+    public void messageRequestGreaterThanTimestampWithPaging() throws Exception
+    {
+        ChatTestClient clientA = new ChatTestClient(this.roomName, this.port, this.websocketURL);
+
+        int messageCount = 3;
+        for (int i = 0; i < messageCount; i++)
+        {
+            clientA.sendMessage("Hello from A " + i);
+            Integer objectI = i;
+            Awaitility.await().until(() -> clientA.getRecievedMessages().size() == objectI + 1);
+        }
+
+        long creationTimestampOfFirstMessageSent = clientA.getRecievedMessages().get(0).getCreationTimestamp();
+        MessageRequestByTimestampType requestType = MessageRequestByTimestampType.GREATER_THAN_TIMESTAMP;
+        for (int i = 0; i < messageCount; i++)
+        {
+            Integer objectI = i;
+            clientA.requestMessages(creationTimestampOfFirstMessageSent - 1, requestType, 1, i);
+            Awaitility.await().until(() -> clientA.getRecievedRequestedMessages().size() == objectI + 1);
+            List<ChatMessageDTO> requestedReceivedMessages = clientA.getRecievedRequestedMessages();
+            ChatMessageDTO lastRecievedRequestedMessage = requestedReceivedMessages.get(requestedReceivedMessages.size() - 1);
+            assertEquals(clientA.getSentMessages().get(i).getText(), lastRecievedRequestedMessage.getText());
+        }
+
+        clientA.disconnect();
+    }
+
+
 
     @Test
     public void requestNonExistentMessagesWithGreaterThanTimestamp() throws Exception

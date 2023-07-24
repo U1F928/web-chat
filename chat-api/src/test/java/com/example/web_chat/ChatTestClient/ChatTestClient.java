@@ -181,10 +181,10 @@ public class ChatTestClient
         this.stompSession.send(url, messageRequest);
     }
 
-    public void requestMessages(long unixTimestamp, MessageRequestByTimestampType messageRequestType,
+    public void requestMessages(long creationTimestamp, MessageRequestByTimestampType messageRequestType,
             int pageSize, int pageNumber)
     {
-        MessageRequestByTimestampDTO messageRequest = new MessageRequestByTimestampDTO(unixTimestamp,
+        MessageRequestByTimestampDTO messageRequest = new MessageRequestByTimestampDTO(creationTimestamp,
                 messageRequestType, pageSize, pageNumber);
         this.requestMessages(messageRequest);
     }

@@ -34,7 +34,7 @@ public class MessageRequestByTimestampDTO
         return this.pageSize;
     }
 
-    public int getPageNumebr()
+    public int getPageNumber()
     {
         return this.pageNumber;
     }
