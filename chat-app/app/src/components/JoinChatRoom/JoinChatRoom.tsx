@@ -1,7 +1,7 @@
 import './JoinChatRoom.css'
 import { NavigateFunction, useNavigate } from 'react-router-dom'
 
-function JoinRoom()
+function JoinChatRoom()
 {
     const navigate : NavigateFunction = useNavigate();
     function handleSubmit(event: React.FormEvent<HTMLFormElement>)
@@ -19,4 +19,4 @@ function JoinRoom()
     );
 }
 
-export default JoinRoom
+export default JoinChatRoom
