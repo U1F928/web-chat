@@ -1,10 +1,9 @@
 import { useParams } from "react-router-dom"
-import './Chat.css'
+import './ChatRoom.css'
 
-// TODO: add routing, i.e. /room/Cats calls 'Chat("Cats")'
 function Chat()
 {
-	let {roomName} = useParams();
+	let roomName : string = useParams().roomName as string;
     return(
         <div id="chat">
 			<div id="room-name">

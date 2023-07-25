@@ -1,15 +1,15 @@
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
 
-import JoinRoom from './components/JoinRoom/JoinRoom'
-import Chat from './components/Chat/Chat'
+import JoinChatRoom from './components/JoinChatRoom/JoinChatRoom'
+import ChatRoom from './components/ChatRoom/ChatRoom'
 
 function App () 
 {
   return (
       <Routes>
-        <Route path="/" element={<JoinRoom />}/> 
-        <Route path="/:roomName" element={<Chat />}/> 
+        <Route path="/" element={<JoinChatRoom />}/> 
+        <Route path="/:roomName" element={<ChatRoom />}/> 
       </Routes>
   )
 }
