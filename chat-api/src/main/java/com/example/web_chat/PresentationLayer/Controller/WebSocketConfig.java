@@ -42,9 +42,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry)
     {
-        // Use ws://localhost:8080/websocket to establish websocket connection
+        // Connect on ws://localhost:8080/websocket
         registry.addEndpoint("/websocket").setAllowedOriginPatterns("*");
-        // Use http://localhost:8080/websocket to establish websocket connection
+        // With SockJS connect on http://localhost:8080/websocket
         registry.addEndpoint("/websocket").setAllowedOriginPatterns("*").withSockJS();
     }
 }
