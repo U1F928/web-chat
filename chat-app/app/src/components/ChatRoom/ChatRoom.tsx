@@ -18,8 +18,8 @@ function Chat()
 			</div>
 
 			<span id="send-comment">
-				<input id="comment-form" type="text" name="comment_text" placeholder="Aa"/> 
-				<button id="send-button"> &#10140; </button>
+				<textarea id="comment-form" rows={1} name="comment_text" placeholder="Aa"/> 
+				<button id="send-button"> </button>
 			</span>
 		</div>
     )
