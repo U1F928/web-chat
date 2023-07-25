@@ -70,8 +70,8 @@ html,
 	overflow: hidden;
 	color: grey;
 	word-break: break-all;
-	overflow: hidden;
 	font-size: 1.2em;
+	overflow-y: auto;
 	border: none;
 	outline: none;
 }
