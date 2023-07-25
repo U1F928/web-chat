@@ -51,7 +51,7 @@ public class WebSocketTest
     public void init()
     {
         this.roomName = "Cats";
-        this.websocketURL = "http://localhost:{port}/websocket";
+        this.websocketURL = "ws://localhost:{port}/websocket";
     }
 
     @Test

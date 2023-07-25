@@ -61,10 +61,7 @@ public class ChatTestClient
 
     private WebSocketStompClient createStompClient()
     {
-        List<Transport> transports = new ArrayList<>();
-        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
-        SockJsClient sockJsClient = new SockJsClient(transports);
-        WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
+        WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
         ThreadPoolTaskScheduler messageBrokerTaskScheduler = new ThreadPoolTaskScheduler();
         messageBrokerTaskScheduler.setPoolSize(3);
