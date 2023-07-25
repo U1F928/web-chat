@@ -1,9 +1,30 @@
 import { useParams } from "react-router-dom"
 import './ChatRoom.css'
+import { Client } from '@stomp/stompjs';
+import { useEffect } from "react";
 
-function Chat()
+function ChatRoom()
 {
 	let roomName : string = useParams().roomName as string;
+	function initializeConnection()
+	{
+		const client = new Client({
+            brokerURL: 'ws://localhost:8080/websocket',
+            debug: (str) => {
+                console.log(str);
+            },
+        });
+		// @ts-ignore
+		client.onConnect( () => {
+            console.log('onConnect');
+            client.subscribe('/topic/balance', message => {
+                console.log(message);
+            })
+        });
+		client.activate();
+		console.log("initializing...");
+	}
+	useEffect(initializeConnection);
     return(
         <div id="chat">
 			<div id="room-name">
@@ -25,4 +46,4 @@ function Chat()
     )
 }
 
-export default Chat
+export default ChatRoom
