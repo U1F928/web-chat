@@ -6,24 +6,42 @@ import { useEffect } from "react";
 function ChatRoom()
 {
 	let roomName : string = useParams().roomName as string;
+	let client : Client;
 	function initializeConnection()
 	{
-		const client = new Client({
-            brokerURL: 'ws://localhost:8080/websocket',
-            debug: (str) => {
-                console.log(str);
-            },
-        });
-		// @ts-ignore
-		client.onConnect( () => {
-            console.log('onConnect');
-            client.subscribe('/topic/balance', message => {
-                console.log(message);
-            })
-        });
+		client = new Client
+		(
+			{
+				brokerURL: 'ws://localhost:8080/websocket',
+				debug: (str) => 
+				{
+					console.log(str);
+				},
+				onConnect: () => 
+				{
+					client.subscribe
+					(
+						'/topic/room.' + roomName, 
+						(message) =>
+						{
+							console.log(`Received: ${message.body}`);
+						}
+					);
+				}
+			}
+		);
+	
 		client.activate();
 		console.log("initializing...");
 	}
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>)
+    {
+        event.preventDefault();
+        const messageInput : HTMLInputElement = event.currentTarget.elements.namedItem("message-form") as HTMLInputElement;
+        const message : string  = messageInput.value;
+        let clientMessage = { "text": message };
+		client.publish({ destination: "/app/room/" + roomName + "/publish_message", body: JSON.stringify(clientMessage) })
+    }
 	useEffect(initializeConnection);
     return(
         <div id="chat">
@@ -31,17 +49,18 @@ function ChatRoom()
   	          {roomName}
 			</div>
 
-			<div id="comment-section">
+			<div id="message-section">
   	      {/*
 				<img src="/static/chat/loading_icon.svg" alt="Loading..." id="loading-icon">
   	          </img>
   	      */}
 			</div>
 
-			<span id="send-comment">
-				<textarea id="comment-form" rows={1} name="comment_text" placeholder="Aa"/> 
+        	<form id="send-message" onSubmit={handleSubmit}>
+				<textarea form="send-message" id="message-form" rows={1} name="message_text" placeholder="Aa"/> 
 				<button id="send-button"> </button>
-			</span>
+        	</form>
+
 		</div>
     )
 }

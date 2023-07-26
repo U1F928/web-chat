@@ -32,7 +32,7 @@ html,
 	overflow-x: auto;
 }
 
-#comment-section {
+#message-section {
 	overflow-y: scroll;
 	border-bottom: 2px solid grey;
 }
@@ -45,7 +45,7 @@ html,
 	width: 1.2em;
 }
 
-.comment {
+.message {
 	margin: 0.2em;
 	padding: 0.5em;
 	font-size: 1.2em;
@@ -57,7 +57,7 @@ html,
 	color: white;
 }
 
-#send-comment {
+#send-message {
 	display: grid;
 	grid-template-columns: auto min-content;
 	word-wrap: break-word;
@@ -65,7 +65,7 @@ html,
 	overflow-x: auto;
 }
 
-#comment-form {
+#message-form {
 	box-sizing: border-box;
 	overflow: hidden;
 	color: grey;
