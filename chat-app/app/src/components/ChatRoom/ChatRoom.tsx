@@ -1,39 +1,48 @@
 import { useParams } from "react-router-dom"
 import './ChatRoom.css'
 import { Client } from '@stomp/stompjs';
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, createElement } from "react";
 
 function ChatRoom()
 {
 	let roomName: string = useParams().roomName as string;
-	const [messageFormText, setMessageFormText] = useState("");
+	const [messageFormText, setMessageFormText] = useState<string>("");
 	let client = useRef(new Client());
 	let wasRenderedBefore = useRef(false);
-	// TODO: use 'state' to represent the message-section, 
-	//  	 also use 'state' to represent the message-form textarea
 	// TODO: add functionality to load older messages via requests by timestamp
 	//
 	// TODO: add send by hitting enter functionality
+
+	const [messages, setMessages] = useState<any[]>([]);
 	function initializeConnection()
 	{
 		client.current = new Client
 			(
 				{
 					brokerURL: 'ws://localhost:8080/websocket',
-					debug: (str) => 
+					debug: function handleDebug(str : string) 
 					{
 						console.log(str);
 					},
-					onConnect: () => 
+					onConnect: function handleConnect() 
 					{
 						client.current.subscribe
-							(
-								'/topic/room.' + roomName,
-								(message : any) =>
+						(
+							'/topic/room.' + roomName,
+							function handleNewMessage(message : any)
+							{
+								let messageText = JSON.parse(message.body)["text"];
+								let messageElement = createElement( 'div', { className: 'message' }, messageText);
+								//https://stackoverflow.com/questions/59322030/why-is-react-statearray-empty-inside-callback-function-why-is-it-not-using-th
+								// use state updater function
+								function updateMessages(oldMessages : any)
 								{
-									console.log(`Received: ${message.body}`);
+									return [...oldMessages, messageElement];
 								}
-							);
+								setMessages(updateMessages);
+								console.log(`Received: ${message.body}`);
+							}
+						);
 					}
 				}
 			);
@@ -43,12 +52,15 @@ function ChatRoom()
 	}
 	function handleSubmit(event: React.FormEvent<HTMLFormElement>)
 	{
+		console.log(messages);
 		event.preventDefault();
 		const messageInput: HTMLInputElement = event.currentTarget.elements.namedItem("message-form") as HTMLInputElement;
 		const message: string = messageInput.value;
+		//let messageElement = createElement( 'div', { className: 'message' }, message);
 		let clientMessage = { "text": message };
 		client.current.publish({ destination: "/app/room/" + roomName + "/publish_message", body: JSON.stringify(clientMessage) })
 		setMessageFormText("");
+		//setMessages([...messages, messageElement]);
 	}
 	function handleChange(event : any)
 	{
@@ -56,7 +68,7 @@ function ChatRoom()
 	}
 	useEffect
 	(
-		() =>
+		function _()
 		{
 			console.log("was rendered before:" + wasRenderedBefore.current);
 			if(wasRenderedBefore.current === false)
@@ -73,6 +85,7 @@ function ChatRoom()
 			</div>
 
 			<div id="message-section">
+				{messages}
 				{/*
 				<img src="/static/chat/loading_icon.svg" alt="Loading..." id="loading-icon">
   	          </img>
