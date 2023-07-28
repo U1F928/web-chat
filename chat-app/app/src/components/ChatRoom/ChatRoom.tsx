@@ -1,26 +1,31 @@
 import { useParams } from "react-router-dom"
 import './ChatRoom.css'
-import { Client } from '@stomp/stompjs';
-import { useEffect, useState, useRef, createElement } from "react";
+import { Client } from '@stomp/stompjs'
+import { useEffect, useState, useRef, createElement } from "react"
+import MessageForm from "../MessageForm/MessageForm"
+import MessageSection from "../MessageSection/MessageSection"
 
 function ChatRoom()
 {
 	let roomName: string = useParams().roomName as string;
-	const [messageFormText, setMessageFormText] = useState<string>("");
+	const [messages, setMessages] = useState<any[]>([]);
 	let client = useRef(new Client());
 	let wasRenderedBefore = useRef(false);
 	// TODO: add functionality to load older messages via requests by timestamp
 	//
 	// TODO: add send by hitting enter functionality
+	//
+	// TODO: use CSS modules https://medium.com/@ralph1786/using-css-modules-in-react-app-c2079eadbb87
 	function handleConnect() 
 	{
 		client.current.subscribe
 		(
-			'/topic/room.' + roomName,
-			function handleNewMessage(message : any)
+			`/topic/room.${roomName}`,
+			function handleRecievedMessage(message : any)
 			{
 				let messageText = JSON.parse(message.body)["text"];
-				let messageElement = createElement( 'div', { className: 'message' }, messageText);
+				let messageID = JSON.parse(message.body)["id"];
+				let messageElement = createElement( 'div', { className: 'message', key : messageID}, messageText);
 				//https://stackoverflow.com/questions/59322030/why-is-react-statearray-empty-inside-callback-function-why-is-it-not-using-th
 				// use state updater function
 				function updateMessages(oldMessages : any)
@@ -33,7 +38,6 @@ function ChatRoom()
 		);
 	}
 
-	const [messages, setMessages] = useState<any[]>([]);
 	function initializeConnection()
 	{
 		client.current = new Client
@@ -50,22 +54,17 @@ function ChatRoom()
 		client.current.activate();
 		console.log("initializing...");
 	}
-	function handleSubmit(event: React.FormEvent<HTMLFormElement>)
+	function handleMessageSubmission(message : string)
 	{
-		console.log(messages);
-		event.preventDefault();
-		const messageInput: HTMLInputElement = event.currentTarget.elements.namedItem("message-form") as HTMLInputElement;
-		const message: string = messageInput.value;
-		//let messageElement = createElement( 'div', { className: 'message' }, message);
 		let clientMessage = { "text": message };
-		client.current.publish({ destination: "/app/room/" + roomName + "/publish_message", body: JSON.stringify(clientMessage) })
-		setMessageFormText("");
-		//setMessages([...messages, messageElement]);
+		client.current.publish({ destination: `/app/room/${roomName}/publish_message`, body: JSON.stringify(clientMessage) })
 	}
-	function handleChange(event : any)
+
+	function handleScrollToTop()
 	{
-		setMessageFormText(event.currentTarget.value);
+		console.log("scrolled to top");
 	}
+
 	useEffect
 	(
 		function _()
@@ -84,18 +83,9 @@ function ChatRoom()
 				{roomName}
 			</div>
 
-			<div id="message-section">
-				{messages}
-				{/*
-				<img src="/static/chat/loading_icon.svg" alt="Loading..." id="loading-icon">
-  	          </img>
-  	      */}
-			</div>
+			<MessageSection messages={messages} onScrollToTop={handleScrollToTop} />
 
-			<form id="send-message" onSubmit={handleSubmit}>
-				<textarea form="send-message" id="message-form" rows={1} name="message_text" placeholder="Aa" onChange={handleChange} value={messageFormText} />
-				<button id="send-button"> </button>
-			</form>
+		  	<MessageForm onSubmit={handleMessageSubmission} />
 
 		</div>
 	)
