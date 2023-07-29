@@ -4,30 +4,17 @@ import './MessageSection.css'
 function MessageSection({messages, onScrolledToTop} : any)
 {
     const messageSection = useRef<HTMLDivElement>(null);
-    let previousScrollTop = useRef(0);
+    let previousDistFromBottom = useRef(0);
     let scrolledToBottom = useRef(true);
 
-
-    function handleScroll(event: any)
+    function handleScroll()
     {
         if(messageSection.current == null)
         {
             return;
         }
         scrolledToBottom.current = (messageSection.current.scrollHeight - messageSection.current.scrollTop - messageSection.current.clientHeight) < 1;
-        previousScrollTop.current = messageSection.current.scrollTop;
-    }
-    function checkIfScrolledToTop()
-    {
-        if(messageSection.current === null)
-        {
-            return;
-        }
-
-        if(messageSection.current.scrollTop === 0)
-        {
-            onScrolledToTop();
-        }
+        previousDistFromBottom.current = messageSection.current.scrollHeight - messageSection.current.scrollTop;
     }
 
     useEffect
@@ -46,16 +33,31 @@ function MessageSection({messages, onScrolledToTop} : any)
             }
             else
             {
-                // go back to the previous scrollTop value (before new messages were added)
-                messageSection.current.scrollTop = previousScrollTop.current;
+                messageSection.current.scrollTop = messageSection.current.scrollHeight - previousDistFromBottom.current;
+
             }
         }
     )
+
+    function checkIfScrolledToTop()
+    {
+        if(messageSection.current === null)
+        {
+            return;
+        }
+
+        if(messageSection.current.scrollTop === 0)
+        {
+            onScrolledToTop();
+        }
+    }
+
     setInterval
     (
         checkIfScrolledToTop,
         1000
-    )
+    );
+
     return (
     <div ref={messageSection} id="message-section" onScroll={handleScroll}>
         {messages}

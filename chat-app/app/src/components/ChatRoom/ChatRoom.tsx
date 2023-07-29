@@ -7,22 +7,31 @@ import MessageSection from "../MessageSection/MessageSection"
 
 function ChatRoom()
 {
-	let roomName: string = useParams().roomName as string;
-	const [messages, setMessages] = useState<any[]>([]);
-	let client = useRef(new Client());
 	let wasRenderedBefore = useRef(false);
+
+	let roomName: string = useParams().roomName as string;
+
+	const [messages, setMessages] = useState<any[]>([]);
+
+	// client related variables
+	let client = useRef(new Client());
 	let initTimestamp = useRef(Date.now());
 	let lastRequestedPageNumber = useRef(-1);
-	// TODO: add functionality to load older messages via requests by timestamp
-	//
+	let recievedRequestedMessages = useRef(true);
+
 	// TODO: add send by hitting enter functionality
 	//
 	// TODO: use CSS modules https://medium.com/@ralph1786/using-css-modules-in-react-app-c2079eadbb87
-
+	//
+	// TODO: add classes for the DTOs
+	//
+	// TODO: sort in the messages by ID
+	//
+	// TODO: check that missed messages load after disconnect&reconnect
 	function createNewMessageElement(message : any)
 	{
-		let messageText = JSON.parse(message.body).text;
-		let messageID = JSON.parse(message.body).id;
+		let messageText = message.text;
+		let messageID = message.id;
 		let messageElement = createElement( 'div', { id: messageID, className: 'message', key : messageID}, messageText);
 		return messageElement;
 	}
@@ -33,33 +42,46 @@ function ChatRoom()
 			`/topic/room.${roomName}`,
 			function handleRecievedMessage(message : any)
 			{
-				let messageElement = createNewMessageElement(message);
+				let receivedMessage = JSON.parse(message.body);
+				let newMessageElement = createNewMessageElement(receivedMessage);
 				//https://stackoverflow.com/questions/59322030/why-is-react-statearray-empty-inside-callback-function-why-is-it-not-using-th
 				// use state updater function
 				function updateMessages(oldMessages : any)
 				{
-					return [...oldMessages, messageElement];
+					return [...oldMessages, newMessageElement];
 				}
 				setMessages(updateMessages);
 				console.log(`Received: ${message.body}`);
 			}
 		);
-		//client.current.subscribe
-		//(
-		//	`/user/topic/requested_messages`,
-		//	function handleRecievedMessage(message : any)
-		//	{
-		//		let messageElement = createNewMessageElement(message);
-		//		//https://stackoverflow.com/questions/59322030/why-is-react-statearray-empty-inside-callback-function-why-is-it-not-using-th
-		//		// use state updater function
-		//		function updateMessages(oldMessages : any)
-		//		{
-		//			return [...oldMessages, messageElement];
-		//		}
-		//		setMessages(updateMessages);
-		//		console.log(`Received: ${message.body}`);
-		//	}
-		//);
+		client.current.subscribe
+		(
+			`/user/topic/requested_messages`,
+			function handleRecievedMessage(message : any)
+			{
+				let recievedMessages = JSON.parse(message.body);
+				if(recievedMessages.length === 0)
+				{
+					return;
+				}
+				console.log(recievedMessages);
+				recievedRequestedMessages.current = true;
+				let newMessageElements : any[] = [];
+				for(let i = 0; i < recievedMessages.length; i++)
+				{
+					let newMessageElement = createNewMessageElement(recievedMessages[i]);
+					newMessageElements.push(newMessageElement);
+				}
+				//https://stackoverflow.com/questions/59322030/why-is-react-statearray-empty-inside-callback-function-why-is-it-not-using-th
+				// use state updater function
+				function updateMessages(oldMessages : any)
+				{
+					return [newMessageElements, ...oldMessages];
+				}
+				setMessages(updateMessages);
+				console.log(`Received: ${message.body}`);
+			}
+		);
 
 	}
 
@@ -96,13 +118,21 @@ function ChatRoom()
 		{
 			return;
 		}
+		// if previous request is not fulfilled yet
+		if(!recievedRequestedMessages.current)
+		{
+			return;
+		}
+
+		recievedRequestedMessages.current = false;
+		lastRequestedPageNumber.current += 1;
 		const pageSize : number = 15;
         let messageRequest =
         {
             "creationTimestamp": initTimestamp.current,
             "requestType": "LESS_THAN_TIMESTAMP",
             "pageSize": pageSize,
-			"pageNumber": lastRequestedPageNumber.current + 1
+			"pageNumber": lastRequestedPageNumber.current
         }
 		client.current.publish
 		(
