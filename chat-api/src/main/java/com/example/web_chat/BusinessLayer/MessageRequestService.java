@@ -35,16 +35,19 @@ public class MessageRequestService
             return new ArrayList<ChatMessage>();
         }
 
+        int pageSize = messageRequest.getPageSize();
+        int pageNumber = messageRequest.getPageNumber();
         if(messageRequest.getRequestType() == MessageRequestByTimestampType.LESS_THAN_TIMESTAMP)
         {
-            Pageable firstN = PageRequest.of(0, messageRequest.getMessageCountLimit());
+            Pageable firstN = PageRequest.of(pageNumber, pageSize);
             List<ChatMessage> requestedMessages = this.chatMessageRepository.findByRoomAndCreationTimestampLessThan(chatRoom, messageRequest.getCreationTimestamp(), firstN);
             Collections.reverse(requestedMessages);
             return requestedMessages;
         }
         else if(messageRequest.getRequestType() == MessageRequestByTimestampType.GREATER_THAN_TIMESTAMP)
         {
-            Pageable firstN = PageRequest.of(0, messageRequest.getMessageCountLimit());
+            System.out.println("Got page number: " + pageNumber + " and page size: " + pageSize);
+            Pageable firstN = PageRequest.of(pageNumber, pageSize);
             return this.chatMessageRepository.findByRoomAndCreationTimestampGreaterThan(chatRoom, messageRequest.getCreationTimestamp(), firstN);
         }
 

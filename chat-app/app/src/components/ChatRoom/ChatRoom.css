@@ -1,0 +1,33 @@
+body,
+html,
+#root {
+	margin: 0;
+	padding: 0;
+}
+
+#root {
+	min-width: 100vw; /* just width does not work */
+	height: 100vh;
+}
+
+#chat {
+	height: 95%;
+	width: 95%;
+	transform: translateX(2.5%) translateY(2.5%);
+	box-sizing: border-box;
+	display: grid;
+	grid-template-rows: min-content auto min-content;
+	background-color: #fff;
+	font-family: "Calibri", "Roboto", sans-serif;
+	border: 2px solid grey;
+	border-radius: 5px;
+}
+
+#room-name {
+	box-sizing: border-box;
+	border-bottom: 2px solid grey;
+	color: rgb(75, 74, 74);
+	font-size: 1.5em;
+	text-align: center;
+	overflow-x: auto;
+}

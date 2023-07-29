@@ -7,13 +7,16 @@ public class MessageRequestByTimestampDTO
 
     private MessageRequestByTimestampType requestType;
 
-    private int messageCountLimit;
+    private int pageSize;
+    
+    private int pageNumber;
 
-    public MessageRequestByTimestampDTO(long creationTimestamp, MessageRequestByTimestampType requestType, int messageCountLimit)
+    public MessageRequestByTimestampDTO(long creationTimestamp, MessageRequestByTimestampType requestType, int pageSize, int pageNumber)
     {
         this.creationTimestamp = creationTimestamp;
         this.requestType = requestType;
-        this.messageCountLimit = messageCountLimit;
+        this.pageSize = pageSize;
+        this.pageNumber = pageNumber;
     };
 
     public long getCreationTimestamp()
@@ -26,8 +29,13 @@ public class MessageRequestByTimestampDTO
         return this.requestType;
     }
 
-    public int getMessageCountLimit()
+    public int getPageSize()
     {
-        return this.messageCountLimit;
+        return this.pageSize;
+    }
+
+    public int getPageNumber()
+    {
+        return this.pageNumber;
     }
 }

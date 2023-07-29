@@ -1,0 +1,34 @@
+#message-form {
+	display: grid;
+	grid-template-columns: auto min-content;
+	word-wrap: break-word;
+	margin: 0.1em;
+	overflow-x: auto;
+}
+
+#message-textarea {
+	box-sizing: border-box;
+	overflow: hidden;
+	color: grey;
+	word-break: break-all;
+	font-size: 1.2em;
+	overflow-y: auto;
+	border: none;
+	outline: none;
+}
+
+#send-button {
+	overflow: hidden;
+	font-size: min(5vw, 1.2em);
+	background-color: #34C759;
+	color: white;
+	border: 2px solid #1d7233;
+	cursor: pointer;
+	word-break: break-all;
+	border-radius: 2px;
+}
+
+#send-button:hover {
+	background-color: white;
+	color: #34C759;
+}

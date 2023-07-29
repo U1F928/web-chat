@@ -1,0 +1,24 @@
+#message-section {
+	overflow-y: scroll;
+	border-bottom: 2px solid grey;
+}
+
+#loading-icon {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	height: 1.2em;
+	width: 1.2em;
+}
+
+.message {
+	margin: 0.2em;
+	padding: 0.5em;
+	font-size: 1.2em;
+	word-break: break-all;
+	clear: both;
+	float: left;
+	border-radius: 2px;
+	background-color: #34C759;
+	color: white;
+}

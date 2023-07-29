@@ -61,10 +61,7 @@ public class ChatTestClient
 
     private WebSocketStompClient createStompClient()
     {
-        List<Transport> transports = new ArrayList<>();
-        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
-        SockJsClient sockJsClient = new SockJsClient(transports);
-        WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
+        WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
         ThreadPoolTaskScheduler messageBrokerTaskScheduler = new ThreadPoolTaskScheduler();
         messageBrokerTaskScheduler.setPoolSize(3);
@@ -181,11 +178,11 @@ public class ChatTestClient
         this.stompSession.send(url, messageRequest);
     }
 
-    public void requestMessages(long unixTimestamp, MessageRequestByTimestampType messageRequestType,
-            int messageCountLimit)
+    public void requestMessages(long creationTimestamp, MessageRequestByTimestampType messageRequestType,
+            int pageSize, int pageNumber)
     {
-        MessageRequestByTimestampDTO messageRequest = new MessageRequestByTimestampDTO(unixTimestamp,
-                messageRequestType, messageCountLimit);
+        MessageRequestByTimestampDTO messageRequest = new MessageRequestByTimestampDTO(creationTimestamp,
+                messageRequestType, pageSize, pageNumber);
         this.requestMessages(messageRequest);
     }
 

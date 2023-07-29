@@ -48,6 +48,7 @@ services:
       - ${CHAT_API_PORT}:8080
 
   chat-api-test:
+    image: chat-api-test
     profiles: ["test"]
     depends_on:
       - database
@@ -71,3 +72,12 @@ services:
       - ${CHAT_API_PORT}:8080
 
     command: ./mvnw test -Dspring.profiles.active=test-with-Postgres-database
+
+  chat-app:
+    image: chat-app
+    profiles: ["production"]
+    build: 
+      context: chat-app
+      dockerfile: Dockerfile
+    ports:
+      - ${CHAT_APP_PORT}:80
