@@ -9,7 +9,7 @@
 
 #message-textarea {
 	box-sizing: border-box;
-	overflow-y: auto;
+	overflow-y: hidden;
 	color: grey;
 	word-break: break-all;
 	font-size: 1.2em;
@@ -20,16 +20,17 @@
 }
 
 #send-button {
-	margin-right: 0.5em;
+	margin-right: 0.3em;
+	margin-left: 0.3em;
 	cursor: pointer;
 	word-break: break-all;
 	border-radius: 2px;
 	height:2em;
 	width: 2em;
 	align-self: flex-end;
+	filter: opacity(50%)
 }
 
 #send-button:hover {
-	background-color: white;
-	color: #34C759;
+	filter: opacity(100%)
 }

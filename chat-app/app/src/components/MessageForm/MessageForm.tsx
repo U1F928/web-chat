@@ -1,6 +1,6 @@
 import {useState, useRef, useEffect} from "react"
 import './MessageForm.css'
-import sendIcon from './send-icon.svg'
+import sendIcon from './send-icon-green.svg'
 
 
 function MessageForm({onSubmit} : any )
