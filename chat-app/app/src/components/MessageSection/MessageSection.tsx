@@ -19,7 +19,7 @@ function MessageSection({messages, onScrolledToTop} : any)
 
     useEffect
     (
-        function _()
+        function updateScrollPosition()
         {
             if(messageSection.current === null)
             {
