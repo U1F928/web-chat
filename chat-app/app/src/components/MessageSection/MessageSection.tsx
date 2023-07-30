@@ -4,8 +4,8 @@ import './MessageSection.css'
 function MessageSection({messages, onScrolledToTop} : any)
 {
     const messageSection = useRef<HTMLDivElement>(null);
-    let previousDistFromBottom = useRef(0);
-    let scrolledToBottom = useRef(true);
+    const previousDistFromBottom = useRef(0);
+    const scrolledToBottom = useRef(true);
 
     function handleScroll()
     {
