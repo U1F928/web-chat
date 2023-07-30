@@ -6,11 +6,15 @@ function MessageForm({onSubmit} : any )
 {
 	const [messageFormContent, setMessageFormContent] = useState<string>("");
 	const messageTextArea = useRef<HTMLTextAreaElement>(null);
+	const messageTextAreaRowCount = useRef(1);
 
 
-	function handleMessageFormContentChange(event : any)
+	function handleMessageTextAreaContentChange(event : any)
 	{
 		setMessageFormContent(event.currentTarget.value);
+		if(messageTextArea === null) return;
+		if(messageTextArea.current === null) return;
+		messageTextArea.current.style.height = (messageTextArea.current.scrollHeight) + "px";
 	}
 
     function onSubmitWrapper(event: React.FormEvent<HTMLFormElement>)
@@ -21,6 +25,7 @@ function MessageForm({onSubmit} : any )
 			return;
 		}
 		const message: string = messageTextArea.current.value;
+		messageTextAreaRowCount.current = 1;
         onSubmit(message);
 		setMessageFormContent("");
     }
@@ -48,9 +53,9 @@ function MessageForm({onSubmit} : any )
 				placeholder="Aa" 
 				name="message_text" 
 				ref={messageTextArea} 
-				rows={1} 
+				rows={messageTextAreaRowCount.current} 
 				value={messageFormContent} 
-				onChange={handleMessageFormContentChange} 
+				onChange={handleMessageTextAreaContentChange} 
 				onKeyDown={handleKeyDown}
 			/>
 			<button id="send-button"> </button>

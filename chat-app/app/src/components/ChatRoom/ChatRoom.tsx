@@ -19,8 +19,6 @@ function ChatRoom()
 	const lastRequestedPageNumber = useRef(-1);
 	const recievedRequestedMessages = useRef(true);
 
-	// TODO: implement the 'add send by hitting enter' functionality
-	//
 	// TODO: use CSS modules https://medium.com/@ralph1786/using-css-modules-in-react-app-c2079eadbb87
 	//
 	// TODO: add classes for the DTOs
