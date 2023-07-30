@@ -15,29 +15,8 @@ function MessageSection({messages, onScrolledToTop} : any)
         }
         scrolledToBottom.current = (messageSection.current.scrollHeight - messageSection.current.scrollTop - messageSection.current.clientHeight) < 1;
         previousDistFromBottom.current = messageSection.current.scrollHeight - messageSection.current.scrollTop;
+        console.log("current dist from bottom:" + previousDistFromBottom.current);
     }
-
-    useEffect
-    (
-        function updateScrollPosition()
-        {
-            if(messageSection.current === null)
-            {
-                return;
-            }
-            // if was previously scrolled to the bottom:
-            if(scrolledToBottom.current)
-            {
-                // scroll back to the bottom
-                messageSection.current.scrollTop = messageSection.current.scrollHeight;
-            }
-            else
-            {
-                messageSection.current.scrollTop = messageSection.current.scrollHeight - previousDistFromBottom.current;
-
-            }
-        }
-    )
 
     function checkIfScrolledToTop()
     {
@@ -52,11 +31,33 @@ function MessageSection({messages, onScrolledToTop} : any)
         }
     }
 
+    function updateScrollPosition()
+    {
+        console.log("UPDATING SCROLL POSITION!")
+        if(messageSection.current === null)
+        {
+            return;
+        }
+        // if was previously scrolled to the bottom:
+        if(scrolledToBottom.current)
+        {
+            // scroll back to the bottom
+            messageSection.current.scrollTop = messageSection.current.scrollHeight;
+        }
+        else
+        {
+            console.log("prev dist from bottom:" + previousDistFromBottom.current);
+            messageSection.current.scrollTop = messageSection.current.scrollHeight - previousDistFromBottom.current;
+        }
+    }
+
     setInterval
     (
         checkIfScrolledToTop,
         1000
     );
+
+    useEffect(updateScrollPosition);
 
     return (
     <div ref={messageSection} id="message-section" onScroll={handleScroll}>
@@ -69,4 +70,4 @@ function MessageSection({messages, onScrolledToTop} : any)
    )
 }
 
-export default MessageSection
+export default MessageSection;

@@ -13,18 +13,20 @@
 	color: grey;
 	word-break: break-all;
 	font-size: 1.2em;
+	align-self: center;
 	border: none;
+	resize: none;
 	outline: none;
 }
 
 #send-button {
-	overflow: hidden;
-	background-color: #34C759;
-	color: white;
-	border: 2px solid #1d7233;
+	margin-right: 0.5em;
 	cursor: pointer;
 	word-break: break-all;
 	border-radius: 2px;
+	height:2em;
+	width: 2em;
+	align-self: flex-end;
 }
 
 #send-button:hover {

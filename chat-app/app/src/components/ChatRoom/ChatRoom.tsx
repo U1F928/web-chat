@@ -157,6 +157,7 @@ function ChatRoom()
 			}
 		}
 	);
+
 	return (
 		<div id="chat">
 			<div id="room-name">
