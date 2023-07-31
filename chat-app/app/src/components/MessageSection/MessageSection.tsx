@@ -6,6 +6,7 @@ function MessageSection({messages, onScrolledToTop} : any)
     const messageSection = useRef<HTMLDivElement>(null);
     const previousDistFromBottom = useRef(0);
     const scrolledToBottom = useRef(true);
+    const firstMessageID = useRef(-1);
 
     function handleScroll()
     {
@@ -13,6 +14,10 @@ function MessageSection({messages, onScrolledToTop} : any)
         {
             return;
         }
+        console.log("XAXAXAXA")
+        console.log("XAXAXAXA")
+        console.log("XAXAXAXA")
+        console.log("XAXAXAXA")
         scrolledToBottom.current = (messageSection.current.scrollHeight - messageSection.current.scrollTop - messageSection.current.clientHeight) < 1;
         previousDistFromBottom.current = messageSection.current.scrollHeight - messageSection.current.scrollTop;
         console.log("current dist from bottom:" + previousDistFromBottom.current);
@@ -27,28 +32,41 @@ function MessageSection({messages, onScrolledToTop} : any)
 
         if(messageSection.current.scrollTop === 0)
         {
+            messageSection.current.scrollTop = 1;
             onScrolledToTop();
         }
     }
 
     function updateScrollPosition()
     {
-        console.log("UPDATING SCROLL POSITION!")
         if(messageSection.current === null)
         {
             return;
         }
+        if(messageSection.current.scrollTop === 0)
+        {
+            messageSection.current.scrollTop = 1;
+        }
+
         // if was previously scrolled to the bottom:
         if(scrolledToBottom.current)
         {
             // scroll back to the bottom
             messageSection.current.scrollTop = messageSection.current.scrollHeight;
         }
-        else
+        if(messageSection.current.children.length !== 0)
         {
-            console.log("prev dist from bottom:" + previousDistFromBottom.current);
-            messageSection.current.scrollTop = messageSection.current.scrollHeight - previousDistFromBottom.current;
+            let currentFirstMessageID = parseInt(messageSection.current.children[0].getAttribute("id") as string);
+            // if new comment was added to the top, i.e. if first element is now different
+            // than the last saved first element
+            if(currentFirstMessageID != firstMessageID?.current)
+            {
+                console.log("prev dist from bottom:" + previousDistFromBottom.current);
+                messageSection.current.scrollTop = messageSection.current.scrollHeight - previousDistFromBottom.current;
+            }
+            firstMessageID.current = currentFirstMessageID;
         }
+        previousDistFromBottom.current = messageSection.current.scrollHeight - messageSection.current.scrollTop;
     }
 
     setInterval
