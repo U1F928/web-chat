@@ -92,7 +92,7 @@ function ChatRoom()
 		client.current = new Client
 		(
 			{
-				brokerURL: 'ws://localhost:8080/websocket',
+				brokerURL: `ws://localhost/websocket`,
 				debug: function handleDebug(str : string) 
 				{
 					console.log(str);
