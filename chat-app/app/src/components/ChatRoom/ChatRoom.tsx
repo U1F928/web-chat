@@ -84,6 +84,8 @@ function ChatRoom()
 				console.log(`Received: ${message.body}`);
 			}
 		);
+		// TODO: REFACTOR
+		handleScrolledToTop();
 
 	}
 

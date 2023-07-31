@@ -8,21 +8,6 @@ function MessageSection({messages, onScrolledToTop} : any)
     const scrolledToBottom = useRef(true);
     const firstMessageID = useRef(-1);
 
-    function handleScroll()
-    {
-        if(messageSection.current == null)
-        {
-            return;
-        }
-        console.log("XAXAXAXA")
-        console.log("XAXAXAXA")
-        console.log("XAXAXAXA")
-        console.log("XAXAXAXA")
-        scrolledToBottom.current = (messageSection.current.scrollHeight - messageSection.current.scrollTop - messageSection.current.clientHeight) < 1;
-        previousDistFromBottom.current = messageSection.current.scrollHeight - messageSection.current.scrollTop;
-        console.log("current dist from bottom:" + previousDistFromBottom.current);
-    }
-
     function checkIfScrolledToTop()
     {
         if(messageSection.current === null)
@@ -32,9 +17,20 @@ function MessageSection({messages, onScrolledToTop} : any)
 
         if(messageSection.current.scrollTop === 0)
         {
-            messageSection.current.scrollTop = 1;
             onScrolledToTop();
         }
+    }
+
+    function handleScroll()
+    {
+        if(messageSection.current == null)
+        {
+            return;
+        }
+        scrolledToBottom.current = (messageSection.current.scrollHeight - messageSection.current.scrollTop - messageSection.current.clientHeight) < 1;
+        previousDistFromBottom.current = messageSection.current.scrollHeight - messageSection.current.scrollTop;
+
+        checkIfScrolledToTop();
     }
 
     function updateScrollPosition()
@@ -43,11 +39,6 @@ function MessageSection({messages, onScrolledToTop} : any)
         {
             return;
         }
-        if(messageSection.current.scrollTop === 0)
-        {
-            messageSection.current.scrollTop = 1;
-        }
-
         // if was previously scrolled to the bottom:
         if(scrolledToBottom.current)
         {
@@ -61,7 +52,6 @@ function MessageSection({messages, onScrolledToTop} : any)
             // than the last saved first element
             if(currentFirstMessageID != firstMessageID?.current)
             {
-                console.log("prev dist from bottom:" + previousDistFromBottom.current);
                 messageSection.current.scrollTop = messageSection.current.scrollHeight - previousDistFromBottom.current;
             }
             firstMessageID.current = currentFirstMessageID;
@@ -69,11 +59,6 @@ function MessageSection({messages, onScrolledToTop} : any)
         previousDistFromBottom.current = messageSection.current.scrollHeight - messageSection.current.scrollTop;
     }
 
-    setInterval
-    (
-        checkIfScrolledToTop,
-        1000
-    );
 
     useEffect(updateScrollPosition);
 
