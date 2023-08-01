@@ -1,6 +1,12 @@
 #message-section {
 	overflow-y: scroll;
-	border-bottom: 2px solid grey;
+	border: none;
+	scrollbar-width: none;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	margin-left: 5vw;
+	margin-right: 5vw;
+	scrollbar-width: thin;
 }
 
 #loading-icon {
