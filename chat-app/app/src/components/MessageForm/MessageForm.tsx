@@ -8,6 +8,7 @@ function MessageForm({onSubmit} : any )
 	const [messageFormContent, setMessageFormContent] = useState<string>("");
 	const messageTextArea = useRef<HTMLTextAreaElement>(null);
 	const messageTextAreaRowCount = useRef(1);
+	const sendButton = useRef<HTMLInputElement>(null);
 
 	function resizeMessageTextArea()
 	{
@@ -47,7 +48,15 @@ function MessageForm({onSubmit} : any )
 		if(event.keyCode === 13)
 		{
 			event.preventDefault();
-			messageTextArea?.current?.form?.requestSubmit();
+			if(messageTextArea.current === null) return;
+			if(messageTextArea.current.form === null) return;
+			// Request submit is not supported on Safari 15.6
+			// https://stackoverflow.com/questions/67000944/react-form-ref-issue-in-safari-while-using-useref
+			// https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/requestSubmit
+			//messageTextArea?.current?.form?.requestSubmit();
+
+			// Use click() instead
+			sendButton?.current?.click();
 		}
 	}
 
@@ -66,7 +75,7 @@ function MessageForm({onSubmit} : any )
 				onChange={handleMessageTextAreaContentChange} 
 				onKeyDown={handleKeyDown}
 			/>
-			<input id="send-button" type="image" src={sendIcon} />
+			<input id="send-button" ref={sendButton} type="image" src={sendIcon} />
 		</form>
     )
 }
