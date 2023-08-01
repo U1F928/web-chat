@@ -20,5 +20,7 @@
 	float: left;
 	border-radius: 2px;
 	background-color: #34C759;
+	white-space: pre-line;
+	text-align: left;
 	color: white;
 }
