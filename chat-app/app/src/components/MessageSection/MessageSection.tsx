@@ -27,7 +27,7 @@ function MessageSection({messages, onScrolledToTop} : any)
         {
             return;
         }
-        scrolledToBottom.current = (messageSection.current.scrollHeight - messageSection.current.scrollTop - messageSection.current.clientHeight) < 1;
+        scrolledToBottom.current = (messageSection.current.scrollHeight - messageSection.current.scrollTop - messageSection.current.clientHeight) < 10;
         previousDistFromBottom.current = messageSection.current.scrollHeight - messageSection.current.scrollTop;
 
         checkIfScrolledToTop();
@@ -48,7 +48,7 @@ function MessageSection({messages, onScrolledToTop} : any)
         if(messageSection.current.children.length !== 0)
         {
             let currentFirstMessageID = parseInt(messageSection.current.children[0].getAttribute("id") as string);
-            // if new comment was added to the top, i.e. if first element is now different
+            // if new message was added to the top, i.e. if first element is now different
             // than the last saved first element
             if(currentFirstMessageID != firstMessageID?.current)
             {

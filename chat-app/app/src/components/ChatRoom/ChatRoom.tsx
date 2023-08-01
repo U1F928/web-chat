@@ -22,8 +22,6 @@ function ChatRoom()
 	// TODO: use CSS modules https://medium.com/@ralph1786/using-css-modules-in-react-app-c2079eadbb87
 	//
 	// TODO: add classes for the DTOs
-	//
-	// TODO: check that missed messages load after disconnect&reconnect
 	function createNewMessageElement(message : any)
 	{
 		const messageText = message.text;
@@ -31,6 +29,7 @@ function ChatRoom()
 		const messageElement = createElement( 'div', { id: messageID, className: 'message', key : messageID}, messageText);
 		return messageElement;
 	}
+	// TODO: Refactor this function
 	function handleConnect() 
 	{
 		client.current.subscribe
@@ -84,8 +83,7 @@ function ChatRoom()
 				console.log(`Received: ${message.body}`);
 			}
 		);
-		// TODO: REFACTOR
-		handleScrolledToTop();
+		requestOlderMessages();
 
 	}
 
@@ -105,6 +103,7 @@ function ChatRoom()
 		client.current.activate();
 		console.log("initializing...");
 	}
+
 	function handleMessageSubmission(message : string)
 	{
 		if(!client.current.connected)
@@ -115,7 +114,7 @@ function ChatRoom()
 		client.current.publish({ destination: `/app/room/${roomName}/publish_message`, body: JSON.stringify(clientMessage) })
 	}
 
-	function handleScrolledToTop()
+	function requestOlderMessages()
 	{
 		console.log("scrolled to top");
 		if(!client.current.connected)
@@ -166,7 +165,7 @@ function ChatRoom()
 				{roomName}
 			</div>
 
-			<MessageSection messages={messages} onScrolledToTop={handleScrolledToTop} />
+			<MessageSection messages={messages} onScrolledToTop={requestOlderMessages} />
 
 		  	<MessageForm onSubmit={handleMessageSubmission} />
 
