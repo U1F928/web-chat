@@ -8,7 +8,7 @@ function MessageForm({onSubmit} : any )
 	const [messageFormContent, setMessageFormContent] = useState<string>("");
 	const messageTextArea = useRef<HTMLTextAreaElement>(null);
 	const messageTextAreaRowCount = useRef(1);
-	const sendButton = useRef<HTMLInputElement>(null);
+	const sendButton = useRef<HTMLButtonElement>(null);
 
 	function resizeMessageTextArea()
 	{
@@ -75,7 +75,9 @@ function MessageForm({onSubmit} : any )
 				onChange={handleMessageTextAreaContentChange} 
 				onKeyDown={handleKeyDown}
 			/>
-			<input id="send-button" ref={sendButton} type="image" src={sendIcon} />
+			<button id="send-button" ref={sendButton} > 
+				<img id="send-icon" src={sendIcon} />
+			</button>
 		</form>
     )
 }
