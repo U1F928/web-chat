@@ -15,7 +15,7 @@
 #message-textarea {
 	box-sizing: border-box;
 	overflow-y: hidden;
-	color: grey;
+	color: rgb(81, 81, 81);
 	word-break: keep-all;
 	font-size: 1.2em;
 	align-self: center;
