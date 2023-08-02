@@ -48,8 +48,10 @@ function MessageSection({messages, onScrolledToTop} : any)
         if(messageSection.current.children.length !== 0)
         {
             let currentFirstMessageID = parseInt(messageSection.current.children[0].getAttribute("id") as string);
-            // if new message was added to the top, i.e. if first element is now different
-            // than the last saved first element
+            /* 
+                if a new message was added to the top, i.e. if the first element is now different
+                than the last saved first element
+            */
             if(currentFirstMessageID != firstMessageID?.current)
             {
                 messageSection.current.scrollTop = messageSection.current.scrollHeight - previousDistFromBottom.current;

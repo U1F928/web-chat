@@ -29,62 +29,65 @@ function ChatRoom()
 		const messageElement = createElement( 'div', { id: messageID, className: 'message', key : messageID}, messageText);
 		return messageElement;
 	}
-	// TODO: Refactor this function
+
+	function handleRecievedMessage(message : any)
+	{
+		const receivedMessage = JSON.parse(message.body);
+		const newMessageElement = createNewMessageElement(receivedMessage);
+		//https://stackoverflow.com/questions/59322030/why-is-react-statearray-empty-inside-callback-function-why-is-it-not-using-th
+		// use state updater function
+		function updateMessages(oldMessages : any)
+		{
+			return [...oldMessages, newMessageElement];
+		}
+		setMessages(updateMessages);
+		console.log(`Received: ${message.body}`);
+	}
+
+	function handleRecievedRequestedMessage(message : any)
+	{
+		/*
+		 	Assuming only older messages are requested.
+		 	Before requesting anything else other than 
+			older messages implement the issue 48 (More informative DTOs).
+		 	https://github.com/U1F928/web-chat-2/issues/48
+		*/
+		const recievedMessages = JSON.parse(message.body);
+		if(recievedMessages.length === 0)
+		{
+			return;
+		}
+		console.log(recievedMessages);
+		recievedRequestedMessages.current = true;
+		let newMessageElements : any[] = [];
+		for(let i = 0; i < recievedMessages.length; i++)
+		{
+			const newMessageElement = createNewMessageElement(recievedMessages[i]);
+			newMessageElements.push(newMessageElement);
+		}
+		//https://stackoverflow.com/questions/59322030/why-is-react-statearray-empty-inside-callback-function-why-is-it-not-using-th
+		// use state updater function
+		function updateMessages(oldMessages : any)
+		{
+			return [newMessageElements, ...oldMessages];
+		}
+		setMessages(updateMessages);
+		console.log(`Received: ${message.body}`);
+	}
+
 	function handleConnect() 
 	{
 		client.current.subscribe
 		(
 			`/topic/room.${roomName}`,
-			function handleRecievedMessage(message : any)
-			{
-				const receivedMessage = JSON.parse(message.body);
-				const newMessageElement = createNewMessageElement(receivedMessage);
-				//https://stackoverflow.com/questions/59322030/why-is-react-statearray-empty-inside-callback-function-why-is-it-not-using-th
-				// use state updater function
-				function updateMessages(oldMessages : any)
-				{
-					return [...oldMessages, newMessageElement];
-				}
-				setMessages(updateMessages);
-				console.log(`Received: ${message.body}`);
-			}
+			handleRecievedMessage
 		);
 		client.current.subscribe
 		(
 			`/user/topic/requested_messages`,
-			function handleRecievedMessage(message : any)
-			{
-				/*
-				 	Assuming only older messages are requested.
-				 	Before requesting anything else other than 
-					older messages implement the issue 48 (More informative DTOs).
-				 	https://github.com/U1F928/web-chat-2/issues/48
-				*/
-				const recievedMessages = JSON.parse(message.body);
-				if(recievedMessages.length === 0)
-				{
-					return;
-				}
-				console.log(recievedMessages);
-				recievedRequestedMessages.current = true;
-				let newMessageElements : any[] = [];
-				for(let i = 0; i < recievedMessages.length; i++)
-				{
-					const newMessageElement = createNewMessageElement(recievedMessages[i]);
-					newMessageElements.push(newMessageElement);
-				}
-				//https://stackoverflow.com/questions/59322030/why-is-react-statearray-empty-inside-callback-function-why-is-it-not-using-th
-				// use state updater function
-				function updateMessages(oldMessages : any)
-				{
-					return [newMessageElements, ...oldMessages];
-				}
-				setMessages(updateMessages);
-				console.log(`Received: ${message.body}`);
-			}
+			handleRecievedRequestedMessage
 		);
 		requestOlderMessages();
-
 	}
 
 	function initializeConnection()
