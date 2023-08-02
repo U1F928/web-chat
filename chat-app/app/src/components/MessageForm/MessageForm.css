@@ -10,13 +10,15 @@
 	margin-left: 5vw;
 	margin-right: 5vw;
 	margin-bottom: 0.5em;
+	overflow-y: auto;
 }
 
 #message-textarea {
 	box-sizing: border-box;
 	overflow-y: hidden;
 	color: rgb(81, 81, 81);
-	word-break: keep-all;
+	white-space: pre-wrap;
+	word-break: break-word;
 	font-size: 1.2em;
 	align-self: center;
 	padding:0;
@@ -27,17 +29,32 @@
 
 #send-button {
 	box-sizing: border-box;
-	padding: 0.3em;
-	margin-right: 0.3em;
-	margin-left: 0.3em;
 	cursor: pointer;
-	border: none;
-	height:2em;
-	width: 2em;
 	align-self: flex-end;
-	filter: opacity(50%)
+	background-color: white;
+	border: none;
+	width: min-content;
+	height: min-content;
+	display: flex;
+	padding: 0;
 }
 
-#send-button:hover {
+#send-icon
+{
+	box-sizing: border-box;
+	align-self: center;
+	filter: opacity(50%);
+	/*
+		on Safari 15.6.1 iPhone
+		When the height is too small, 
+		it causes the scrollTop value to not be visually at the 
+		very bottom. Is it the auto zoom? 
+	*/
+	height: 2em;
+	width: 2em;
+
+}
+
+#send-icon:hover {
 	filter: opacity(100%)
 }
