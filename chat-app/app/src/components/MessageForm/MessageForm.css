@@ -2,16 +2,21 @@
 	max-height: 30vh;
 	display: grid;
 	grid-template-columns: auto min-content;
-	word-wrap: break-word;
-	margin: 0.1em;
-	overflow-x: auto;
+	box-shadow: 0px 0px 3px 3px #E1D9D1;
+	/* https://stackoverflow.com/questions/23991054/does-rem-make-sense-on-border-radius */
+	border-radius: 0.3em;
+	box-sizing: border-box;
+	padding: 0.5em;
+	margin-left: 5vw;
+	margin-right: 5vw;
+	margin-bottom: 0.5em;
 }
 
 #message-textarea {
 	box-sizing: border-box;
 	overflow-y: hidden;
-	color: grey;
-	word-break: break-all;
+	color: rgb(81, 81, 81);
+	word-break: keep-all;
 	font-size: 1.2em;
 	align-self: center;
 	padding:0;
@@ -21,11 +26,12 @@
 }
 
 #send-button {
+	box-sizing: border-box;
+	padding: 0.3em;
 	margin-right: 0.3em;
 	margin-left: 0.3em;
 	cursor: pointer;
-	word-break: break-all;
-	border-radius: 2px;
+	border: none;
 	height:2em;
 	width: 2em;
 	align-self: flex-end;

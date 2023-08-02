@@ -1,34 +1,50 @@
 body,
 html,
+
 #root {
 	margin: 0;
 	padding: 0;
 }
 
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: rgb(231, 229, 229);
+	border-radius: 5px;
+	width: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #d4ccc5;
+	border-radius: 5px;
+	width: 10px;
+}
+
 #root {
-	min-width: 100vw; /* just width does not work */
+	width: 100vw;
 	height: 100vh;
 }
 
 #chat {
 	position: fixed;
-	height: 95%;
-	width: 95%;
-	transform: translateX(2.5%) translateY(2.5%);
+	height: 100%;
+	width: 100%;
 	box-sizing: border-box;
 	display: grid;
 	grid-template-rows: min-content auto min-content;
-	background-color: #fff;
+	background-color: #ffff;
 	font-family: "Calibri", "Roboto", sans-serif;
-	border: 2px solid grey;
-	border-radius: 5px;
+	border: none;
 }
 
 #room-name {
 	box-sizing: border-box;
-	border-bottom: 2px solid grey;
 	color: rgb(75, 74, 74);
 	font-size: 1.5em;
+	padding: 0.1em;
+	box-shadow: 0px 0px 3px 3px #E1D9D1;
 	text-align: center;
 	overflow-x: auto;
 }
