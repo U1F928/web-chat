@@ -4,6 +4,7 @@ import { NavigateFunction, useNavigate } from 'react-router-dom'
 function JoinChatRoom()
 {
     const navigate : NavigateFunction = useNavigate();
+
     function handleSubmit(event: React.FormEvent<HTMLFormElement>)
     {
         event.preventDefault();
@@ -11,6 +12,7 @@ function JoinChatRoom()
         const roomName : string  = roomNameInput.value;
         navigate(`/${roomName}`);
     }
+
     return (
         <form id="join-form" onSubmit={handleSubmit}>
             <input id="room-name-input" type="text" placeholder="Enter a room name" />

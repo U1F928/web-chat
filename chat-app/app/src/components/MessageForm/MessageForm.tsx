@@ -2,8 +2,12 @@ import {useState, useRef, useEffect} from "react"
 import './MessageForm.css'
 import sendIcon from './send-icon-green.svg'
 
+type MessageFormProps =
+{
+	onSubmit : (message : string) => void
+}
 
-function MessageForm({onSubmit} : any )
+export function MessageForm({onSubmit} : MessageFormProps )
 {
 	const [messageFormContent, setMessageFormContent] = useState<string>("");
 	const messageTextArea = useRef<HTMLTextAreaElement>(null);
@@ -18,7 +22,7 @@ function MessageForm({onSubmit} : any )
 		messageTextArea.current.style.height = (messageTextArea.current.scrollHeight) + "px";
 	}
 
-	function handleMessageTextAreaContentChange(event : any)
+	function handleMessageTextAreaContentChange(event : React.ChangeEvent<HTMLTextAreaElement>)
 	{
 		setMessageFormContent(event.currentTarget.value);
 		resizeMessageTextArea();
@@ -37,15 +41,15 @@ function MessageForm({onSubmit} : any )
     }
 
 
-	function handleKeyDown(event : any)
+	function handleKeyDown(event : React.KeyboardEvent<HTMLTextAreaElement>)
 	{
 		console.log(event)
-		if(event.keyCode === 13 && event.shiftKey)
+		if(event.key === 'Enter' && event.shiftKey)
 		{
 			return;
 		}
 
-		if(event.keyCode === 13)
+		if(event.key === 'Enter')
 		{
 			event.preventDefault();
 			if(messageTextArea.current === null) return;
@@ -81,5 +85,3 @@ function MessageForm({onSubmit} : any )
 		</form>
     )
 }
-
-export default MessageForm
