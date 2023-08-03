@@ -10,15 +10,11 @@ import { MessageRequestByTimestampDTO } from "../../DTOs/MessageRequestByTimesta
 import { MessageRequestByTimestampType } from "../../DTOs/MessageRequestByTimestampType"
 import './ChatRoom.css'
 
-function ChatRoom()
+export function ChatRoom()
 {
 	const wasRenderedBefore = useRef(false);
-
 	const roomName: string = useParams().roomName as string;
-
 	const [messages, setMessages] = useState<JSX.Element[]>([]);
-
-	// client related variables
 	const client = useRef(new Client());
 	const initTimestamp = useRef(Date.now());
 	const lastRequestedPageNumber = useRef(-1);
@@ -28,7 +24,6 @@ function ChatRoom()
 
 	function handleRecievedMessage(message: any)
 	{
-		console.log(message)
 		const receivedMessage: ChatMessageDTO = ChatMessageDTO.fromJSON(JSON.parse(message.body));
 		const newMessageElement = <ChatMessage message={receivedMessage} />;
 		setMessages(oldMessages => [...oldMessages, newMessageElement]);
@@ -83,8 +78,7 @@ function ChatRoom()
 		client.current = new Client
 			(
 				{
-					//brokerURL: `ws://${window.location.hostname}/websocket`,
-					brokerURL: `ws://localhost:8080/websocket`,
+					brokerURL: `ws://${window.location.hostname}/websocket`,
 					debug: (str: string) => { console.log(str) }
 				}
 			);
@@ -150,16 +144,16 @@ function ChatRoom()
 
 	return (
 		<div id="chat">
-			<div id="room-name">
-				{roomName}
-			</div>
 
-			<MessageSection messages={messages} onScrolledToTop={requestOlderMessages} />
+			<div id="room-name"> {roomName} </div>
+
+			<MessageSection
+				messages={messages}
+				onScrolledToTop={requestOlderMessages}
+			/>
 
 			<MessageForm onSubmit={handleMessageSubmission} />
 
 		</div>
 	)
 }
-
-export default ChatRoom

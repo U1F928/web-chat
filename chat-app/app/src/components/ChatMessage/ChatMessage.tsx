@@ -1,22 +1,20 @@
 import { ChatMessageDTO } from "../../DTOs/ChatMessageDTO";
 
 type ChatMessageProps =
-{
-    message : ChatMessageDTO,
-}
+    {
+        message: ChatMessageDTO,
+    }
 
-export function ChatMessage({message} : ChatMessageProps)
+export function ChatMessage({ message }: ChatMessageProps)
 {
-    const messageText : string = message.getText();
-    const messageID : number = message.getID();
-    console.log("message text:" + messageText)
-    console.log("message ID: " + messageID)
-    
+    const messageText: string = message.getText();
+    const messageID: number = message.getID();
+
     return (
-        <div 
-            id={messageID.toString()} 
-            className="message" 
-            key={messageID}> 
+        <div
+            id={messageID.toString()}
+            className="message"
+            key={messageID}>
             {messageText}
         </div>
     );
