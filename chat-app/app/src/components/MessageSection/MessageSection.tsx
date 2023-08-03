@@ -1,7 +1,13 @@
 import { useEffect, useRef } from 'react';
 import './MessageSection.css'
 
-function MessageSection({messages, onScrolledToTop} : any)
+type MessageSectionProps =
+    {
+        messages: JSX.Element[],
+        onScrolledToTop: () => void
+    }
+
+export function MessageSection({ messages, onScrolledToTop }: MessageSectionProps)
 {
     const messageSection = useRef<HTMLDivElement>(null);
     const previousDistFromBottom = useRef(0);
@@ -10,12 +16,12 @@ function MessageSection({messages, onScrolledToTop} : any)
 
     function checkIfScrolledToTop()
     {
-        if(messageSection.current === null)
+        if (messageSection.current === null)
         {
             return;
         }
 
-        if(messageSection.current.scrollTop === 0)
+        if (messageSection.current.scrollTop === 0)
         {
             onScrolledToTop();
         }
@@ -23,7 +29,7 @@ function MessageSection({messages, onScrolledToTop} : any)
 
     function handleScroll()
     {
-        if(messageSection.current == null)
+        if (messageSection.current == null)
         {
             return;
         }
@@ -35,22 +41,24 @@ function MessageSection({messages, onScrolledToTop} : any)
 
     function updateScrollPosition()
     {
-        if(messageSection.current === null)
+        if (messageSection.current === null)
         {
             return;
         }
         // if was previously scrolled to the bottom:
-        if(scrolledToBottom.current)
+        if (scrolledToBottom.current)
         {
             // scroll back to the bottom
             messageSection.current.scrollTop = messageSection.current.scrollHeight;
         }
-        if(messageSection.current.children.length !== 0)
+        if (messageSection.current.children.length !== 0)
         {
             let currentFirstMessageID = parseInt(messageSection.current.children[0].getAttribute("id") as string);
-            // if new message was added to the top, i.e. if first element is now different
-            // than the last saved first element
-            if(currentFirstMessageID != firstMessageID?.current)
+            /* 
+                if a new message was added to the top, i.e. if the first element is now different
+                than the last saved first element
+            */
+            if (currentFirstMessageID != firstMessageID?.current)
             {
                 messageSection.current.scrollTop = messageSection.current.scrollHeight - previousDistFromBottom.current;
             }
@@ -63,14 +71,12 @@ function MessageSection({messages, onScrolledToTop} : any)
     useEffect(updateScrollPosition);
 
     return (
-    <div ref={messageSection} id="message-section" onScroll={handleScroll}>
-        {messages}
-        {/*
+        <div ref={messageSection} id="message-section" onScroll={handleScroll}>
+            {messages}
+            {/*
             <img src="/static/chat/loading_icon.svg" alt="Loading..." id="loading-icon">
             </img>
         */}
-    </div>
-   )
+        </div>
+    )
 }
-
-export default MessageSection;
