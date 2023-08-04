@@ -29,7 +29,7 @@ import com.example.web_chat.PresentationLayer.DTO.Outgoing.ChatMessageDTO;
 */
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class WebSocketTest
+public class WebSocketAPITest
 {
 
     @Value(value = "${local.server.port}")
@@ -67,6 +67,21 @@ public class WebSocketTest
     {
         ChatTestClient clientA = new ChatTestClient(this.roomName, this.port, this.websocketURL);
         clientA.sendMessage("Hello from A");
+        Awaitility.await().until(() -> clientA.getRecievedMessages().size() == 1);
+
+        assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedMessages());
+        clientA.disconnect();
+    }
+
+    @Test
+    public void soloSendAndRecieveLongTextTest() throws Exception
+    {
+        ChatTestClient clientA = new ChatTestClient(this.roomName, this.port, this.websocketURL);
+;
+        String messageText = "";
+        for(Integer i = 0; i < 2999; i++) messageText += "a";
+
+        clientA.sendMessage(messageText);
         Awaitility.await().until(() -> clientA.getRecievedMessages().size() == 1);
 
         assertSentMessagesEqualRequested(clientA.getSentMessages(), clientA.getRecievedMessages());
