@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom"
 import { Client } from '@stomp/stompjs'
 import { useEffect, useState, useRef } from "react"
-import { ChatMessage } from '../ChatMessage/ChatMessage'
 import { MessageForm } from "../MessageForm/MessageForm"
 import { MessageSection } from "../MessageSection/MessageSection"
 import { ChatMessageDTO, ChatMessageJSON } from "../../DTOs/ChatMessageDTO"
@@ -72,8 +71,7 @@ export function ChatRoom()
 		client.current = new Client
 			(
 				{
-					brokerURL: `ws://localhost:8080/websocket`,
-					//brokerURL: `ws://${window.location.hostname}/websocket`,
+					brokerURL: `ws://${window.location.hostname}/websocket`,
 					debug: (str: string) => { console.log(str) }
 				}
 			);
