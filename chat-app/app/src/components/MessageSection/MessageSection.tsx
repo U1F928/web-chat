@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
-import './MessageSection.css'
+import { ChatMessage } from '../ChatMessage/ChatMessage';
+import { ChatMessageDTO } from '../../DTOs/ChatMessageDTO';
+import classes from './MessageSection.module.css'
 
 type MessageSectionProps =
     {
-        messages: JSX.Element[],
+        messages: ChatMessageDTO[],
         onScrolledToTop: () => void
     }
 
@@ -71,12 +73,20 @@ export function MessageSection({ messages, onScrolledToTop }: MessageSectionProp
     useEffect(updateScrollPosition);
 
     return (
-        <div ref={messageSection} id="message-section" onScroll={handleScroll}>
-            {messages}
-            {/*
-            <img src="/static/chat/loading_icon.svg" alt="Loading..." id="loading-icon">
-            </img>
-        */}
+        <div 
+            ref={messageSection} 
+            className={classes.MessageSection} 
+            onScroll={handleScroll}
+            key={31248239}
+        >
+
+            {
+                messages.map
+                (
+                    (message) => <ChatMessage key={message.getID()} message={message}/>
+                )
+            }
+
         </div>
     )
 }

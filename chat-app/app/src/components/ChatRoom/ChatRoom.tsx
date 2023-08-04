@@ -1,20 +1,19 @@
 import { useParams } from "react-router-dom"
 import { Client } from '@stomp/stompjs'
 import { useEffect, useState, useRef } from "react"
-import { ChatMessage } from '../ChatMessage/ChatMessage'
 import { MessageForm } from "../MessageForm/MessageForm"
 import { MessageSection } from "../MessageSection/MessageSection"
 import { ChatMessageDTO, ChatMessageJSON } from "../../DTOs/ChatMessageDTO"
 import { ClientMessageDTO } from "../../DTOs/ClientMessageDTO"
 import { MessageRequestByTimestampDTO } from "../../DTOs/MessageRequestByTimestampDTO"
 import { MessageRequestByTimestampType } from "../../DTOs/MessageRequestByTimestampType"
-import './ChatRoom.css'
+import classes from './ChatRoom.module.css'
 
 export function ChatRoom()
 {
 	const wasRenderedBefore = useRef(false);
 	const roomName: string = useParams().roomName as string;
-	const [messages, setMessages] = useState<JSX.Element[]>([]);
+	const [messages, setMessages] = useState<ChatMessageDTO[]>([]);
 	const client = useRef(new Client());
 	const initTimestamp = useRef(Date.now());
 	const lastRequestedPageNumber = useRef(-1);
@@ -25,12 +24,12 @@ export function ChatRoom()
 	function handleRecievedMessage(message: any)
 	{
 		const receivedMessage: ChatMessageDTO = ChatMessageDTO.fromJSON(JSON.parse(message.body));
-		const newMessageElement = <ChatMessage message={receivedMessage} />;
-		setMessages(oldMessages => [...oldMessages, newMessageElement]);
+		setMessages(oldMessages => [...oldMessages, receivedMessage]);
 	}
 
 	function handleRecievedRequestedMessages(messages: any)
 	{
+		console.log("Handling received requested messages!")
 		/*
 			Assuming only older messages are requested.
 			Before requesting anything else other than 
@@ -49,13 +48,7 @@ export function ChatRoom()
 			return;
 		}
 		recievedRequestedMessages.current = true;
-		let newMessageElements: JSX.Element[] = [];
-		for (let i = 0; i < recievedMessages.length; i++)
-		{
-			const newMessageElement = <ChatMessage message={recievedMessages[i]} />;
-			newMessageElements.push(newMessageElement);
-		}
-		setMessages(oldMessages => [...newMessageElements, ...oldMessages]);
+		setMessages(oldMessages => [...recievedMessages, ...oldMessages]);
 	}
 
 	function handleConnect() 
@@ -143,9 +136,9 @@ export function ChatRoom()
 		);
 
 	return (
-		<div id="chat">
+		<div className={classes.Chat}>
 
-			<div id="room-name"> {roomName} </div>
+			<div className={classes.RoomName}> {roomName} </div>
 
 			<MessageSection
 				messages={messages}

@@ -1,4 +1,4 @@
-#message-form {
+.MessageForm {
 	max-height: 30vh;
 	display: grid;
 	grid-template-columns: auto min-content;
@@ -13,7 +13,7 @@
 	overflow-y: auto;
 }
 
-#message-textarea {
+.MessageTextArea {
 	box-sizing: border-box;
 	overflow-y: hidden;
 	color: rgb(81, 81, 81);
@@ -27,7 +27,7 @@
 	outline: none;
 }
 
-#send-button {
+.SendButton {
 	box-sizing: border-box;
 	cursor: pointer;
 	align-self: flex-end;
@@ -39,7 +39,7 @@
 	padding: 0;
 }
 
-#send-icon
+.SendIcon
 {
 	box-sizing: border-box;
 	align-self: center;
@@ -55,6 +55,6 @@
 
 }
 
-#send-icon:hover {
+.SendIcon:hover {
 	filter: opacity(100%)
 }

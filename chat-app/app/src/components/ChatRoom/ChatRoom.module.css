@@ -1,33 +1,4 @@
-body,
-html,
-
-#root {
-	margin: 0;
-	padding: 0;
-}
-
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-	background-color: rgb(231, 229, 229);
-	border-radius: 5px;
-	width: 1px;
-}
-
-::-webkit-scrollbar-thumb {
-	background-color: #d4ccc5;
-	border-radius: 5px;
-	width: 10px;
-}
-
-#root {
-	width: 100vw;
-	height: 100vh;
-}
-
-#chat {
+.Chat {
 	position: fixed;
 	height: 100%;
 	width: 100%;
@@ -39,7 +10,7 @@ html,
 	border: none;
 }
 
-#room-name {
+.RoomName {
 	box-sizing: border-box;
 	color: rgb(75, 74, 74);
 	font-size: 1.5em;
