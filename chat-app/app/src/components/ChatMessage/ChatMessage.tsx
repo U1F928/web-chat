@@ -15,7 +15,7 @@ export function ChatMessage({ message }: ChatMessageProps)
         <div
             id={messageID.toString()}
             className={classes.ChatMessage}
-            key={messageID}>
+            >
             {messageText}
         </div>
     );

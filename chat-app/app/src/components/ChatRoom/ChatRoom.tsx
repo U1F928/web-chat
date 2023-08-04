@@ -14,7 +14,7 @@ export function ChatRoom()
 {
 	const wasRenderedBefore = useRef(false);
 	const roomName: string = useParams().roomName as string;
-	const [messages, setMessages] = useState<JSX.Element[]>([]);
+	const [messages, setMessages] = useState<ChatMessageDTO[]>([]);
 	const client = useRef(new Client());
 	const initTimestamp = useRef(Date.now());
 	const lastRequestedPageNumber = useRef(-1);
@@ -25,12 +25,12 @@ export function ChatRoom()
 	function handleRecievedMessage(message: any)
 	{
 		const receivedMessage: ChatMessageDTO = ChatMessageDTO.fromJSON(JSON.parse(message.body));
-		const newMessageElement = <ChatMessage message={receivedMessage} />;
-		setMessages(oldMessages => [...oldMessages, newMessageElement]);
+		setMessages(oldMessages => [...oldMessages, receivedMessage]);
 	}
 
 	function handleRecievedRequestedMessages(messages: any)
 	{
+		console.log("Handling received requested messages!")
 		/*
 			Assuming only older messages are requested.
 			Before requesting anything else other than 
@@ -49,13 +49,7 @@ export function ChatRoom()
 			return;
 		}
 		recievedRequestedMessages.current = true;
-		let newMessageElements: JSX.Element[] = [];
-		for (let i = 0; i < recievedMessages.length; i++)
-		{
-			const newMessageElement = <ChatMessage message={recievedMessages[i]} />;
-			newMessageElements.push(newMessageElement);
-		}
-		setMessages(oldMessages => [...newMessageElements, ...oldMessages]);
+		setMessages(oldMessages => [...recievedMessages, ...oldMessages]);
 	}
 
 	function handleConnect() 
