@@ -8,7 +8,7 @@ import { ChatMessageDTO, ChatMessageJSON } from "../../DTOs/ChatMessageDTO"
 import { ClientMessageDTO } from "../../DTOs/ClientMessageDTO"
 import { MessageRequestByTimestampDTO } from "../../DTOs/MessageRequestByTimestampDTO"
 import { MessageRequestByTimestampType } from "../../DTOs/MessageRequestByTimestampType"
-import './ChatRoom.css'
+import classes from './ChatRoom.module.css'
 
 export function ChatRoom()
 {
@@ -78,7 +78,8 @@ export function ChatRoom()
 		client.current = new Client
 			(
 				{
-					brokerURL: `ws://${window.location.hostname}/websocket`,
+					brokerURL: `ws://localhost:8080/websocket`,
+					//brokerURL: `ws://${window.location.hostname}/websocket`,
 					debug: (str: string) => { console.log(str) }
 				}
 			);
@@ -143,9 +144,9 @@ export function ChatRoom()
 		);
 
 	return (
-		<div id="chat">
+		<div className={classes.Chat}>
 
-			<div id="room-name"> {roomName} </div>
+			<div className={classes.RoomName}> {roomName} </div>
 
 			<MessageSection
 				messages={messages}

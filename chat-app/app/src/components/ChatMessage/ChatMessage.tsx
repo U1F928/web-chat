@@ -1,4 +1,5 @@
 import { ChatMessageDTO } from "../../DTOs/ChatMessageDTO";
+import classes from './ChatMessage.module.css'
 
 type ChatMessageProps =
     {
@@ -13,7 +14,7 @@ export function ChatMessage({ message }: ChatMessageProps)
     return (
         <div
             id={messageID.toString()}
-            className="message"
+            className={classes.ChatMessage}
             key={messageID}>
             {messageText}
         </div>

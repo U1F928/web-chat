@@ -10,7 +10,7 @@ html,
 	height: 100vh;
 }
 
-#join-form {
+.JoinForm {
 	height: 100%;
 	display: flex;
 	align-items: center;
@@ -18,7 +18,7 @@ html,
 	justify-content: center;
 }
 
-#room-name-input {
+.RoomNameInput {
 	max-width: 95vw;
 	box-sizing: border-box;
 	border-radius: 0.3em;
@@ -36,7 +36,7 @@ html,
 	margin-bottom: 0.3em;
 }
 
-#join-button {
+.JoinButton {
 	background-color: #34C759;
 	box-sizing: border-box;
 	border-radius: 0.3em;
@@ -48,7 +48,7 @@ html,
 	color: white;
 }
 
-#join-button:hover {
+.JoinButton:hover {
 	color: #34C759;
 	background-color: white;
 }

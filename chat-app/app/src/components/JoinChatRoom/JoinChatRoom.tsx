@@ -1,5 +1,5 @@
-import './JoinChatRoom.css'
 import { NavigateFunction, useNavigate } from 'react-router-dom'
+import classes from './JoinChatRoom.module.css'
 
 export function JoinChatRoom()
 {
@@ -14,15 +14,15 @@ export function JoinChatRoom()
     }
 
     return (
-        <form id="join-form" onSubmit={handleSubmit}>
+        <form className={classes.JoinForm} onSubmit={handleSubmit}>
 
             <input
-                id="room-name-input"
+                className={classes.RoomNameInput}
                 type="text"
                 placeholder="Enter a room name"
             />
 
-            <button id="join-button">Join room</button>
+            <button className={classes.JoinButton}>Join room</button>
 
         </form>
     );

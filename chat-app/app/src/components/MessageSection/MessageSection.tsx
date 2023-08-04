@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import './MessageSection.css'
+import classes from './MessageSection.module.css'
 
 type MessageSectionProps =
     {
@@ -71,7 +71,11 @@ export function MessageSection({ messages, onScrolledToTop }: MessageSectionProp
     useEffect(updateScrollPosition);
 
     return (
-        <div ref={messageSection} id="message-section" onScroll={handleScroll}>
+        <div 
+            ref={messageSection} 
+            className={classes.MessageSection} 
+            onScroll={handleScroll}
+        >
             {messages}
             {/*
             <img src="/static/chat/loading_icon.svg" alt="Loading..." id="loading-icon">

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import './MessageForm.css'
+import classes from './MessageForm.module.css'
 import sendIcon from './send-icon-green.svg'
 
 type MessageFormProps =
@@ -64,11 +64,10 @@ export function MessageForm({ onSubmit }: MessageFormProps)
 	useEffect(resizeMessageTextArea);
 
 	return (
-		<form id="message-form" onSubmit={onSubmitWrapper}>
+		<form className={classes.MessageForm} onSubmit={onSubmitWrapper}>
 
 			<textarea
-				form="message-form"
-				id="message-textarea"
+				className={classes.MessageTextArea}
 				placeholder="Aa"
 				name="message_text"
 				ref={messageTextArea}
@@ -78,8 +77,8 @@ export function MessageForm({ onSubmit }: MessageFormProps)
 				onKeyDown={handleKeyDown}
 			/>
 
-			<button id="send-button" ref={sendButton} > 
-				<img id="send-icon" src={sendIcon} />
+			<button className={classes.SendButton} ref={sendButton} > 
+				<img className={classes.SendIcon} src={sendIcon} />
 			</button>
 
 		</form>
