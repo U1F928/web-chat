@@ -24,7 +24,7 @@ public class ChatMessage
     private long creationTimestamp;
 
     @NotNull
-    @Column(name = "chat_message_text", nullable = false)
+    @Column(name = "chat_message_text", length = 3000, nullable = false)
     private String text;
 
     public ChatMessage()
