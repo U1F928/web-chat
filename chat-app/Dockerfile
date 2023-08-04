@@ -1,7 +1,14 @@
 FROM node:slim AS build_stage
-COPY app app
+
 WORKDIR app
+
+# Allow for the caching of dependencies
+COPY app/package-lock.json .
+COPY app/package.json .
 RUN npm install
+
+COPY app/ .
+
 RUN npm run build
 
 FROM nginx:stable

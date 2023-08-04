@@ -1,11 +1,12 @@
 ## Build stage
 FROM amazoncorretto:17.0.7-al2023-headless as build_stage
  
+# Copy the Maven wrapper
 COPY .mvn/ .mvn/
 COPY mvnw mvnw
-COPY pom.xml pom.xml
 
-# Allow for caching of dependencies
+# Allow for the caching of dependencies
+COPY pom.xml pom.xml
 RUN ./mvnw verify clean --fail-never
 
 COPY src/ src/
