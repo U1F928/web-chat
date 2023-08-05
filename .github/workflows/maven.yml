@@ -33,20 +33,20 @@ jobs:
     - name: Remove the containers
       run: docker compose --env-file=.env.example --profile test down
 
-#    - name: Copy test results report from the web-chat-api container
-#      run: mkdir test-results-report && docker cp chat-api:target/surefire-reports test-results-report/
-#
-#    - name: Copy code coverage report from the web-chat-api-server container
-#      run: mkdir code-coverage-report && docker cp web-chat-api-server:target/site/jacoco code-coverage-report/ 
-#
-#    - name: Archive test results
-#      uses: actions/upload-artifact@v3
-#      with:
-#        name: test-results-report
-#        path: test-results-report
-#
-#    - name: Archive code coverage report
-#      uses: actions/upload-artifact@v3
-#      with:
-#        name: code-coverage-report
-#        path: code-coverage-report
+    - name: Copy test results report from the web-chat-api container
+      run: mkdir test-results-report && docker compose cp chat-api:target/surefire-reports test-results-report
+
+    - name: Copy code coverage report from the web-chat-api-server container
+      run: mkdir code-coverage-report && docker compose cp chat-api-server:target/site/jacoco code-coverage-report
+
+    - name: Archive test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-report
+        path: test-results-report
+
+    - name: Archive code coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: code-coverage-report
+        path: code-coverage-report
