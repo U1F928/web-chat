@@ -1,6 +1,6 @@
 # Web Chat 
  
-A simple web application that allows users to create, join and chat in anonymous chat rooms in real time. 
+A simple web application that allows users to create, join and chat in anonymous chat rooms in real-time. 
  
 ## Live Demo 
 
@@ -11,7 +11,7 @@ TBA
 * Back end is implemented in **Java** using the **Spring Boot** framework.
 * Data is stored in a **PostgreSQL** database using **Hibernate**.
 * Real-time communication between the client and the server occurs via **STOMP** over **WebSockets**, with **RabbitMQ** used as a message broker.
-* Front end is implemented in **Typescript** using the **React** framework and is served by a **Nginx** web server.
+* Front end is implemented in **Typescript** using the **React** library and is served by a **Nginx** web server.
 * The application is containerized using **Docker** and **Docker Compose**.
 
 ## Getting Started 
