@@ -71,7 +71,6 @@ export function ChatRoom()
 			(
 				{
 					brokerURL: `ws://${window.location.hostname}/websocket`,
-					debug: (str: string) => { console.log(str) }
 				}
 			);
 		client.current.onConnect = handleConnect;
