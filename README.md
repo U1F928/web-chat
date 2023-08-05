@@ -27,6 +27,7 @@ TBA
 
     ```bash
     git clone https://github.com/U1F928/web-chat-2
+    cd web-chat-2
     ```
 
 2. (Re)Build the images and start the containers
