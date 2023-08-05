@@ -32,10 +32,10 @@ jobs:
 
 
     - name: Copy test results report from the web-chat-api container
-      run: mkdir test-results-report && docker compose cp chat-api:target/surefire-reports test-results-report
+      run: mkdir test-results-report && docker compose cp chat-api-test:target/surefire-reports test-results-report
 
     - name: Copy code coverage report from the web-chat-api-server container
-      run: mkdir code-coverage-report && docker compose cp chat-api:target/site/jacoco code-coverage-report
+      run: mkdir code-coverage-report && docker compose cp chat-api-test:target/site/jacoco code-coverage-report
 
     - name: Archive test results
       uses: actions/upload-artifact@v3
