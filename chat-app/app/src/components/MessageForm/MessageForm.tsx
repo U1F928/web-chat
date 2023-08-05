@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import classes from './MessageForm.module.css'
-import sendIcon from './send-icon-green.svg'
+import sendIcon from '../../assets/send-icon-green.svg'
 
 type MessageFormProps =
 	{

@@ -29,7 +29,6 @@ export function ChatRoom()
 
 	function handleRecievedRequestedMessages(messages: any)
 	{
-		console.log("Handling received requested messages!")
 		/*
 			Assuming only older messages are requested.
 			Before requesting anything else other than 
