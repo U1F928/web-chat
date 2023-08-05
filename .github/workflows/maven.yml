@@ -24,20 +24,16 @@ jobs:
     
     - uses: actions/checkout@v3
     
-    - name: Build the containers
-      run: docker compose build
-
-    - name: Run the integration tests
+    - name: Run the integration tests 
       run: docker compose --env-file=.env.example --profile test up --build --abort-on-container-exit
 
-
-    - name: Copy test results report from the web-chat-api container
+    - name: Copy the test results report from the container
       run: mkdir test-results-report && docker compose cp chat-api-test:target/surefire-reports test-results-report
 
-    - name: Copy code coverage report from the web-chat-api-server container
+    - name: Copy the code coverage report from the container
       run: mkdir code-coverage-report && docker compose cp chat-api-test:target/site/jacoco code-coverage-report
 
-    - name: Archive test results
+    - name: Archive the test results
       uses: actions/upload-artifact@v3
       with:
         name: test-results-report
@@ -49,5 +45,5 @@ jobs:
         name: code-coverage-report
         path: code-coverage-report
 
-    - name: Remove the containers
+    - name: Clean up after the integration tests
       run: docker compose --env-file=.env.example --profile test down
