@@ -59,7 +59,7 @@ TBA
 ## Screenshots
 
 ### Home page
-![Home page](.readme-screenshots/home-page.png)
+![Home page screenshot](.readme-screenshots/home-page.png)
 
 ### Chat
-![Chat](.readme-screenshots/chat-page.png)
+![Chat screenshot](.readme-screenshots/chat-page.png)
