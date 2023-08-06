@@ -45,7 +45,7 @@ TBA
 
 ## Testing
 
-### Run the integration tests
+### Run the backend integration tests
 
 1. (Re)Build the images and start the containers, stop the containers when the tests finish
     ```bash
@@ -56,3 +56,10 @@ TBA
     ```bash
     docker compose --env-file=.env.example --profile test down
     ```
+## Screenshots
+
+### Home page
+![Home page screenshot](.readme-screenshots/home-page.png)
+
+### Chat
+![Chat screenshot](.readme-screenshots/chat-page.png)
