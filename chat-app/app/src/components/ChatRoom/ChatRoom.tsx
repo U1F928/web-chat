@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { Client } from '@stomp/stompjs'
+import { Client, Message } from '@stomp/stompjs'
 import { useEffect, useState, useRef } from "react"
 import { MessageForm } from "../MessageForm/MessageForm"
 import { MessageSection } from "../MessageSection/MessageSection"
@@ -8,6 +8,8 @@ import { ClientMessageDTO } from "../../DTOs/ClientMessageDTO"
 import { MessageRequestByTimestampDTO } from "../../DTOs/MessageRequestByTimestampDTO"
 import { MessageRequestByTimestampType } from "../../DTOs/MessageRequestByTimestampType"
 import classes from './ChatRoom.module.css'
+
+
 
 export function ChatRoom()
 {
@@ -19,15 +21,13 @@ export function ChatRoom()
 	const lastRequestedPageNumber = useRef(-1);
 	const recievedRequestedMessages = useRef(true);
 
-	// TODO: use CSS modules https://medium.com/@ralph1786/using-css-modules-in-react-app-c2079eadbb87
-
-	function handleRecievedMessage(message: any)
+	function handleRecievedMessage(message: Message)
 	{
 		const receivedMessage: ChatMessageDTO = ChatMessageDTO.fromJSON(JSON.parse(message.body));
 		setMessages(oldMessages => [...oldMessages, receivedMessage]);
 	}
 
-	function handleRecievedRequestedMessages(messages: any)
+	function handleRecievedRequestedMessages(messages: Message)
 	{
 		/*
 			Assuming only older messages are requested.
