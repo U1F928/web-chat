@@ -1,6 +1,6 @@
 # Web Chat 
  
-A web application that allows users to create, join and chat in anonymous chat rooms in real-time. 
+A responsive web application that allows users to create, join and chat in anonymous chat rooms in real-time. 
  
 ## Live demo 
 
