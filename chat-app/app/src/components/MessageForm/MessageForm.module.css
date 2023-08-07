@@ -25,6 +25,7 @@
 	border: none;
 	resize: none;
 	outline: none;
+	font-family: "Calibri", "Roboto", sans-serif;
 }
 
 .SendButton {
