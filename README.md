@@ -10,10 +10,10 @@ A responsive web application that allows users to create, join and chat in anony
 ## Built with
 
 * Back end is implemented in **Java** using the **Spring Boot** framework.
-* Data is stored in a **PostgreSQL** database using **Hibernate**.
+* Relevant data is stored in a **PostgreSQL** database using **Hibernate**.
 * Real-time communication between the client and the server occurs via **STOMP** over **WebSockets**, with **RabbitMQ** used as a message broker.
 * Front end is implemented in **TypeScript** using the **React** library and is served by a **Nginx** web server.
-* The application is containerized using **Docker** and **Docker Compose**.
+* Each application component is containerized using **Docker** and orchestrated with **Docker Compose**.
 
 ## Getting started 
  
