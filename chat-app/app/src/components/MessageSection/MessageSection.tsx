@@ -77,7 +77,7 @@ export function MessageSection({ messages, onScrolledToTop }: MessageSectionProp
             ref={messageSection} 
             className={classes.MessageSection} 
             onScroll={handleScroll}
-            key={31248239}
+            key={"messageSection"}
         >
 
             {
