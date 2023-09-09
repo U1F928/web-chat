@@ -20,6 +20,7 @@ export function JoinChatRoom()
 
             <input
                 ref={roomNameInputField}
+                name="roomNameInputField"
                 className={classes.RoomNameInput}
                 type="text"
                 placeholder="Enter a room name"
