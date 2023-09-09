@@ -1,4 +1,4 @@
-FROM node:slim AS build_stage
+FROM node:18-slim AS build_stage
 
 WORKDIR app
 
